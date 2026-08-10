@@ -28,9 +28,18 @@
 <meta name="apple-mobile-web-app-title" content="북끄럽">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=1786354993">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap"></noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"></noscript>
+<style>
+/* 첫 화면이 흰 채로 남지 않도록, 자리 표시에 필요한 최소 스타일만 문서에 둔다 */
+body{margin:0;background:#faf8f3;color:#1c1a17}
+.wrap{max-width:940px;margin:0 auto;padding:0 20px 96px}
+.sk,.sk-book{background:linear-gradient(100deg,#cfc7b8 20%,#e6e0d2 42%,#cfc7b8 62%);background-size:220% 100%;animation:sk-slide 1.25s ease-in-out infinite;border-radius:3px}
+@keyframes sk-slide{from{background-position:130% 0}to{background-position:-30% 0}}
+</style>
+<link rel="stylesheet" href="css/style.css?v=1786355474">
 </head>
 <body>
 <div class="wrap">
@@ -49,7 +58,16 @@
     <div class="chips" id="days"></div>
   </div>
   <p class="no-hit" id="nohit" hidden>찾는 책이 책장에 없어요.</p>
-  <div id="shelves"></div>
+  <div id="shelves"><div class="bookcase">
+      <span class="sk sk-book" style="width:52px;height:180px"></span>
+      <span class="sk sk-book" style="width:38px;height:150px"></span>
+      <span class="sk sk-book" style="width:44px;height:196px"></span>
+      <span class="sk sk-book" style="width:34px;height:162px"></span>
+      <span class="sk sk-book" style="width:48px;height:210px"></span>
+      <span class="sk sk-book" style="width:40px;height:168px"></span>
+      <span class="sk sk-book" style="width:56px;height:186px"></span>
+      <span class="sk sk-book" style="width:36px;height:156px"></span>
+    </div></div>
   <footer class="site-foot">
     <p class="foot-made">
       만든 사람 ·
@@ -84,6 +102,6 @@
   </a>
 </nav>
 
-<script type="module" src="js/page-index.js?v=1786354993"></script>
+<script type="module" src="js/page-index.js?v=1786355474"></script>
 </body>
 </html>

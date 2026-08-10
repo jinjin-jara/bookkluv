@@ -83,7 +83,7 @@ export const SPINE_TEXT = {
   max: 22,
   wrapMax: 16,  // 두 줄로 접을 때 쓰는 글자 크기 상한
   wrapPad: 8,   // 두 줄일 때 좌우로 더 비워두는 폭
-  padding: 20,  // 책등 위아래 여백
+  padding: 34,  // 책등 위아래 여백. CSS의 .book/.spine-text 여백 합과 맞춘다
   perChar: 1.3, // 글자 하나가 먹는 세로 높이 배수 (줄간 + 자간)
   colGap: 1.18, // 한 열이 먹는 가로 폭 배수
   oneLineMax: 14, // 되도록 한 줄로 세운다. 이보다 긴 제목만 두 줄로 접는다
