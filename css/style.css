@@ -1201,20 +1201,48 @@ body.is-leaving .wrap {
 }
 
 /* ── 달력 ────────────────────────────────── */
-.cal-month { margin-bottom: 52px; }
-.cal-title {
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 1.5rem;
-  letter-spacing: 0.02em;
-  margin: 0 0 14px 2px;
+.cal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 6px;
 }
-.cal-title span {
-  font-size: 0.8rem;
-  font-weight: 400;
+.cal-nav {
+  font-family: var(--sans);
+  font-size: 1.5rem;
+  line-height: 1;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: transparent;
   color: var(--ink-soft);
-  margin-left: 10px;
-  letter-spacing: 0;
+  cursor: pointer;
+}
+.cal-nav:hover { border-color: var(--accent); color: var(--accent); }
+
+.cal-pickers { display: flex; gap: 6px; }
+.cal-pickers select {
+  font-family: var(--sans);
+  font-size: 1.02rem;
+  font-weight: 700;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.cal-pickers select:hover { border-color: var(--rule); }
+.cal-pickers select:focus { outline: none; border-color: var(--accent); }
+
+.cal-count {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  text-align: center;
+  margin: 0 0 20px;
 }
 
 .cal-grid {
