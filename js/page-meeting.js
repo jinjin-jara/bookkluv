@@ -4,7 +4,7 @@ import { getMeeting, listComments, addComment, updateComment, deleteComment } fr
 import { maskName } from './mask.js';
 import { isClean } from './profanity.js';
 import { getNickname, setNickname, isEditable } from './nickname.js';
-import { siteHead, esc, formatMeetingDate, formatShort, showError, showEmpty, showLoading, mountNav, rise } from './ui.js';
+import { siteHead, esc, formatMeetingDate, formatShort, showError, showEmpty, mountNav, rise, skeletonShelf, skeletonCards, skeletonNotes } from './ui.js';
 import { setupInstall } from './install.js';
 
 const root = document.getElementById('meeting');
@@ -210,7 +210,7 @@ async function load() {
     return;
   }
 
-  showLoading(root, '모임지를 펼치는 중이에요');
+  skeletonNotes(root);
   try {
     meeting = await getMeeting(meetingId);
   } catch (err) {

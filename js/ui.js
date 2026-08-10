@@ -45,6 +45,11 @@ const NAV = [
     icon: '<path d="M4 4h3v16H4zM9.5 4h3v16h-3zM15.2 4.4l2.9.8-4.2 15.4-2.9-.8z"/>',
   },
   {
+    href: 'calendar.html',
+    label: '달력',
+    icon: '<path d="M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1zm1 5v9h12V9zm2-7v3h2V2zm6 0v3h2V2z"/>',
+  },
+  {
     href: 'picks.html',
     label: '추천',
     icon: '<path d="M12 3.6l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4-3.9-3.8 5.4-.8z"/>',
@@ -138,6 +143,35 @@ export function showEmpty(el, message) {
       <img src="assets/mascot.png" alt="">
       <p>${esc(message)}</p>
     </div>`;
+}
+
+/** 책장 모양 스켈레톤. 빈 화면 대신 들어갈 자리를 미리 보여준다. */
+export function skeletonShelf(el) {
+  const widths = [34, 52, 28, 61, 40, 47, 33, 56, 44, 30, 50, 38, 58, 42];
+  const books = widths.map((w) => {
+    const h = 130 + ((w * 7) % 60);
+    return `<span class="sk-book" style="width:${w}px;height:${h}px"></span>`;
+  }).join('');
+  el.innerHTML = `
+    <section class="year-block">
+      <div class="sk sk-title"></div>
+      <div class="bookcase">${books}</div>
+    </section>`;
+}
+
+/** 포스트잇 자리 */
+export function skeletonNotes(el) {
+  el.innerHTML = `
+    <div class="sk sk-line" style="width:180px"></div>
+    <div class="sk sk-head"></div>
+    <div class="notes">
+      ${'<div class="sk sk-note"></div>'.repeat(3)}
+    </div>`;
+}
+
+/** 추천 카드 자리 */
+export function skeletonCards(el) {
+  el.innerHTML = '<div class="sk sk-card"></div>'.repeat(6);
 }
 
 export function showLoading(el, message = '불러오는 중이에요') {

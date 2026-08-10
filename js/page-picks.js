@@ -2,7 +2,7 @@
 
 import { listPicks } from './api.js';
 import { maskName } from './mask.js';
-import { siteHead, esc, showError, showEmpty, showLoading, mountNav, rise } from './ui.js';
+import { siteHead, esc, showError, showEmpty, mountNav, rise, skeletonShelf, skeletonCards, skeletonNotes } from './ui.js';
 import { setupInstall } from './install.js';
 
 const KIND_LABEL = { book: '책', movie: '영화', etc: '그 외' };
@@ -74,7 +74,7 @@ searchBox.addEventListener('compositionend', () => { composing = false; schedule
 searchBox.addEventListener('input', () => { if (!composing) schedule(); });
 
 async function load() {
-  showLoading(gridEl);
+  skeletonCards(gridEl);
   try {
     picks = await listPicks();
   } catch (err) {

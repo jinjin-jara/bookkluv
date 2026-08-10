@@ -2,7 +2,7 @@
 
 import { listMeetings } from './api.js';
 import { spineWidth, spineHeight, spineColor, spineFontSize, spineMarkup, groupByYear } from './shelf.js';
-import { siteHead, esc, dayOf, DAY_NAMES, showError, showEmpty, showLoading, mountNav, rise } from './ui.js';
+import { siteHead, esc, dayOf, DAY_NAMES, showError, showEmpty, mountNav, rise, skeletonShelf, skeletonCards, skeletonNotes } from './ui.js';
 import { setupInstall } from './install.js';
 
 const shelvesEl = document.getElementById('shelves');
@@ -123,7 +123,7 @@ window.addEventListener('resize', () => {
 });
 
 async function load() {
-  showLoading(shelvesEl, '책장을 꺼내는 중이에요');
+  skeletonShelf(shelvesEl);
   try {
     meetings = await listMeetings();
   } catch (err) {

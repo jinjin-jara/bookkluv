@@ -1,16 +1,16 @@
 /* 북끄럽 아카이브 */
 
 :root {
-  --paper: #f4f0e8;
+  --paper: #faf8f3;
   --ink: #1c1a17;
   --ink-soft: #5a544c;
-  --rule: #cfc7b8;
+  --rule: #ded7c9;
   --accent: #b4472e;
   --wood: #a4633a;
   --wood-dark: #7b4526;
   --wood-edge: #5d321a;
   --shelf-back: #2a2320;
-  --card: #fffdf8;
+  --card: #fffefa;
   --shadow: rgba(28, 26, 23, 0.18);
   --serif: 'Nanum Myeongjo', 'RIDIBatang', 'Apple SD Gothic Neo', serif;
   --sans: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', system-ui, sans-serif;
@@ -21,6 +21,8 @@
 }
 
 @media (prefers-color-scheme: dark) {
+  body::before { mix-blend-mode: screen; opacity: 0.28; }
+
   :root:not([data-theme='light']) {
     --paper: #17150f;
     --ink: #ece5d8;
@@ -34,6 +36,19 @@
 }
 
 * { box-sizing: border-box; }
+
+/* 종이 질감: 아주 옅은 잡티를 화면 전체에 깐다. 글자 읽기를 방해하지 않을 만큼만. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.13'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+.wrap, .tabbar, .note-backdrop, .install-backdrop { position: relative; z-index: 1; }
 
 body {
   margin: 0;
@@ -1135,3 +1150,121 @@ body.is-leaving .wrap {
 .foot-links { margin: 0; display: flex; gap: 14px; }
 .foot-links a { color: var(--ink-soft); text-decoration: none; }
 .foot-links a:hover { color: var(--accent); text-decoration: underline; }
+
+/* ── 스켈레톤 ────────────────────────────── */
+.sk,
+.sk-book {
+  background: linear-gradient(
+    100deg,
+    var(--rule) 20%,
+    color-mix(in srgb, var(--rule) 45%, var(--paper)) 40%,
+    var(--rule) 60%
+  );
+  background-size: 220% 100%;
+  animation: sk-slide 1.25s ease-in-out infinite;
+  border-radius: 3px;
+}
+@keyframes sk-slide {
+  from { background-position: 130% 0; }
+  to { background-position: -30% 0; }
+}
+
+.sk-title { width: 220px; height: 34px; margin: 0 0 14px 4px; border-radius: 4px; }
+.sk-line { height: 15px; margin-bottom: 14px; }
+.sk-head { height: 78px; margin-bottom: 42px; border-radius: 4px; }
+.sk-note { aspect-ratio: 1 / 1; min-height: 240px; border-radius: 3px; }
+.sk-card { height: 190px; border-radius: 4px; }
+
+.bookcase .sk-book {
+  flex: 0 0 auto;
+  align-self: flex-end;
+  margin: 0 3px 9px 0;
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk, .sk-book { animation: none; }
+}
+
+/* ── 달력 ────────────────────────────────── */
+.cal-month { margin-bottom: 52px; }
+.cal-title {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 1.5rem;
+  letter-spacing: 0.02em;
+  margin: 0 0 14px 2px;
+}
+.cal-title span {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--ink-soft);
+  margin-left: 10px;
+  letter-spacing: 0;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+.cal-head {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+  text-align: center;
+  padding-bottom: 6px;
+}
+.cal-head.is-sun, .cal-cell.is-sun .cal-day { color: #c0563c; }
+.cal-head.is-sat, .cal-cell.is-sat .cal-day { color: #4a7fa5; }
+
+.cal-cell {
+  min-height: 84px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 7px 7px 8px;
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-decoration: none;
+  color: inherit;
+}
+.cal-cell.is-blank { border: none; background: none; min-height: 0; }
+.cal-day {
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+.cal-cell.has-meeting {
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.cal-cell.has-meeting:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px var(--shadow);
+  border-color: var(--accent);
+}
+.cal-book {
+  background: var(--pad, #f6e08c);
+  border-radius: 3px;
+  padding: 5px 6px;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: #2b2519;
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+.cal-sk { min-height: 84px; border-radius: 4px; }
+
+@media (max-width: 700px) {
+  .cal-grid { gap: 3px; }
+  .cal-cell { min-height: 62px; padding: 4px 4px 5px; border-radius: 3px; }
+  .cal-book { font-size: 0.6rem; padding: 3px 4px; -webkit-line-clamp: 2; }
+  .cal-day { font-size: 0.64rem; }
+  .cal-title { font-size: 1.25rem; }
+}
