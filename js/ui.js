@@ -43,9 +43,9 @@ const NAV = [
   {
     href: 'index.html',
     label: '책장',
-    icon: `<rect x="4" y="6" width="4" height="11" rx="0.8"/>
-           <rect x="10" y="4" width="4" height="13" rx="0.8"/>
-           <path d="M16.4 5.6l3.1.9-2.6 10.2-3.1-.9z"/>
+    icon: `<rect x="4" y="5" width="4" height="12" rx="0.8"/>
+           <rect x="10" y="5" width="4" height="12" rx="0.8"/>
+           <rect x="16" y="5" width="4" height="12" rx="0.8"/>
            <path d="M3 19.5h18"/>`,
   },
   {
