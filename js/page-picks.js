@@ -34,7 +34,7 @@ function render() {
   gridEl.innerHTML = list
     .map((p) => {
       const from = p.meetings
-        ? `<a href="meeting.html?id=${encodeURIComponent(p.meeting_id)}">${esc(p.meetings.date)} ${esc(p.meetings.title)}</a>`
+        ? `<a href="meeting/?id=${encodeURIComponent(p.meeting_id)}">${esc(p.meetings.date)} ${esc(p.meetings.title)}</a>`
         : '<span></span>';
       const vid = youtubeId(p.url);
       const head = vid

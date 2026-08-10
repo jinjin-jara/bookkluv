@@ -23,7 +23,7 @@ function bookHTML(m, index, total) {
   const tip = `${m.title} · ${m.author || '저자 미상'} · ${m.date} ${dayOf(m.date)}요모임`;
 
   return `<div class="slot" style="width:${w}px" data-date="${esc(m.date)}" data-key="${esc(key)}">
-    <a class="book" href="meeting.html?id=${encodeURIComponent(m.id)}"
+    <a class="book" href="meeting/?id=${encodeURIComponent(m.id)}"
       style="height:${h}px;background:${spineColor(m, index, total)};--spine-size:${fs}px"
       title="${esc(tip)}">
       <span class="spine-text">${spineMarkup(esc(m.title))}</span></a>

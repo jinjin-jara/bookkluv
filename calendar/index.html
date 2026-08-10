@@ -2,27 +2,24 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
+<base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>이야기하다 나온 것들 — 북끄럽</title>
+<title>모임 달력 — 북끄럽</title>
+<meta name="description" content="독서모임 북끄럽의 회차를 달력으로 봅니다">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="북끄럽">
 <meta property="og:locale" content="ko_KR">
-<meta property="og:title" content="이야기하다 나온 것들 — 북끄럽">
-<meta property="og:description" content="모임 중에 자연스레 추천된 책과 영화 모음.">
-<meta property="og:url" content="https://jinjin-jara.github.io/bookkluv/picks.html">
+<meta property="og:title" content="모임 달력 — 북끄럽">
+<meta property="og:description" content="어느 날 어떤 책으로 모였는지 달력으로 봅니다.">
+<meta property="og:url" content="https://jinjin-jara.github.io/bookkluv/calendar/">
 <meta property="og:image" content="https://jinjin-jara.github.io/bookkluv/assets/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="책이 꽂힌 책장 그림과 북끄럽 로고">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="이야기하다 나온 것들 — 북끄럽">
-<meta name="twitter:description" content="모임 중에 자연스레 추천된 책과 영화 모음.">
-<meta name="twitter:image" content="https://jinjin-jara.github.io/bookkluv/assets/og.png">
-<meta name="description" content="독서모임 북끄럽의 회차별 이야깃거리 아카이브">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#f4f0e8">
+<meta name="theme-color" content="#faf8f3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="북끄럽">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +31,7 @@
 <body>
 <div class="wrap">
   <header>
-    <a class="site-head" href="index.html">
+    <a class="site-head" href="./">
       <img src="assets/mascot.png" alt="">
       <div>
         <h1>북끄럽</h1>
@@ -43,28 +40,8 @@
     </a>
   </header>
 
-  <div class="page-title">
-    <h2>이야기하다 나온 것들</h2>
-    <p>모임 중에 자연스레 추천된 책과 영화</p>
-  </div>
 
-  <div class="toolbar">
-    <input type="search" id="pq" placeholder="제목 · 만든이 검색" autocomplete="off">
-    <div class="chips" id="kinds">
-      <button class="chip" data-kind="book" aria-pressed="false">책</button>
-      <button class="chip" data-kind="movie" aria-pressed="false">영화</button>
-      <button class="chip" data-kind="video" aria-pressed="false">영상</button>
-      <button class="chip" data-kind="etc" aria-pressed="false">그 외</button>
-    </div>
-  </div>
-  <div class="pick-grid" id="picks"></div>
-
-  <button type="button" class="fab" id="add-pick" aria-label="추천 남기기">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-      <path d="M12 5v14M5 12h14"/>
-    </svg>
-    <span>추천 남기기</span>
-  </button>
+  <div id="calendar"></div>
   <footer class="site-foot">
     <p class="foot-made">
       만든 사람 ·
@@ -77,28 +54,28 @@
 </div>
 
 <nav class="tabbar" aria-label="주요 화면">
-  <a href="index.html" class="tab">
+  <a href="./" class="tab">
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="5.5" width="4.6" height="11.5" rx="1"/><rect x="10.4" y="5.5" width="4.6" height="11.5" rx="1"/><path d="M17.2 6.2l3.4 1.2-3.3 9.6-3.4-1.2z"/><path d="M4 20h16"/></svg>
     <span>책장</span>
   </a>
-  <a href="calendar.html" class="tab">
+  <a href="calendar/" class="tab is-on" aria-current="page">
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="15" rx="2.2"/><path d="M3.5 10h17M8 3.5v4M16 3.5v4"/><circle cx="8.5" cy="14" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="17" r="1.1" fill="currentColor" stroke="none"/></svg>
     <span>달력</span>
   </a>
-  <a href="picks.html" class="tab is-on" aria-current="page">
+  <a href="picks/" class="tab">
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h11a1 1 0 011 1v15.2a.6.6 0 01-.93.5L12 16.6l-5.57 3.6a.6.6 0 01-.93-.5V4.5a1 1 0 011-1z"/><path d="M9.4 8.6l2.6 2.6 2.6-3.6"/></svg>
     <span>추천</span>
   </a>
-  <a href="admin.html" class="tab">
+  <a href="admin/" class="tab">
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.2l.9-3.6L15.3 6.2a1.6 1.6 0 012.3 0l1.1 1.1a1.6 1.6 0 010 2.3L8.3 19.9z"/><path d="M14.2 7.4l2.9 2.9M4.9 16.6l2.9 2.9"/></svg>
     <span>등록</span>
   </a>
 </nav>
 
-<script type="module" src="js/page-picks.js?v=1786354993"></script>
+<script type="module" src="js/page-calendar.js?v=1786354993"></script>
 </body>
 </html>

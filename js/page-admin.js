@@ -146,7 +146,7 @@ $('admin-form').addEventListener('submit', async (e) => {
       questions,
     });
 
-    location.href = `meeting.html?id=${saved.id}`;
+    location.href = `meeting/?id=${saved.id}`;
   } catch (err) {
     message('등록하지 못했어요. 잠시 뒤 다시 시도해주세요.', 'error');
     submit.disabled = false;

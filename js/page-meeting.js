@@ -31,7 +31,7 @@ function renderMeeting() {
       </div>
     </div>
     <div class="notes" id="notes"></div>
-    <a class="back-link" href="index.html">← 책장으로</a>`;
+    <a class="back-link" href="./">← 책장으로</a>`;
 
   rise(root);
   renderNotes();
@@ -222,7 +222,7 @@ async function load() {
       <div class="state">
         <img src="assets/mascot.png" alt="">
         <p>그런 모임지가 없어요.</p>
-        <a class="back-link" href="index.html">← 책장으로</a>
+        <a class="back-link" href="./">← 책장으로</a>
       </div>`;
     return;
   }

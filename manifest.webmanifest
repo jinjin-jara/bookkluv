@@ -2,7 +2,7 @@
   "name": "북끄럽 — 독서모임 아카이브",
   "short_name": "북끄럽",
   "description": "독서모임 북끄럽의 회차별 이야깃거리 아카이브",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

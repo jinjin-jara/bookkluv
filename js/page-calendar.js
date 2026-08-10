@@ -45,7 +45,7 @@ function render() {
     if (!m) {
       cls.push('is-empty');
       cells.push(`
-        <a class="${cls.join(' ')}" href="admin.html?date=${key}" title="${key}에 모임지 쓰기">
+        <a class="${cls.join(' ')}" href="admin/?date=${key}" title="${key}에 모임지 쓰기">
           <span class="cal-day">${d}</span>
         </a>`);
       continue;
@@ -53,7 +53,7 @@ function render() {
 
     cls.push('has-meeting');
     cells.push(`
-      <a class="${cls.join(' ')}" href="meeting.html?id=${encodeURIComponent(m.id)}"
+      <a class="${cls.join(' ')}" href="meeting/?id=${encodeURIComponent(m.id)}"
          title="${esc(`${m.title} · ${m.author || '저자 미상'}`)}">
         <span class="cal-day" style="--pad:${spineColor(m, m._seq, meetings.length)}">${d}</span>
         <span class="cal-book">${esc(m.title)}</span>
