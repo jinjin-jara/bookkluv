@@ -29,14 +29,54 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=1786354993">
 </head>
 <body>
 <div class="wrap">
-  <header id="head"></header>
+  <header>
+    <a class="site-head" href="index.html">
+      <img src="assets/mascot.png" alt="">
+      <div>
+        <h1>북끄럽</h1>
+        <p>독서모임 아카이브</p>
+      </div>
+    </a>
+  </header>
   <div id="meeting"></div>
+  <footer class="site-foot">
+    <p class="foot-made">
+      만든 사람 ·
+      <a href="https://github.com/jinjin-jara/bookkluv" target="_blank" rel="noopener noreferrer">JinKyung Choi</a>
+    </p>
+    <p class="foot-links">
+      <a href="https://www.instagram.com/bookk_luv/" target="_blank" rel="noopener noreferrer">북끄럽 인스타그램</a>
+    </p>
+  </footer>
 </div>
 
-<script type="module" src="js/page-meeting.js"></script>
+<nav class="tabbar" aria-label="주요 화면">
+  <a href="index.html" class="tab">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="5.5" width="4.6" height="11.5" rx="1"/><rect x="10.4" y="5.5" width="4.6" height="11.5" rx="1"/><path d="M17.2 6.2l3.4 1.2-3.3 9.6-3.4-1.2z"/><path d="M4 20h16"/></svg>
+    <span>책장</span>
+  </a>
+  <a href="calendar.html" class="tab">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="15" rx="2.2"/><path d="M3.5 10h17M8 3.5v4M16 3.5v4"/><circle cx="8.5" cy="14" r="1.1" fill="currentColor" stroke="none"/><circle cx="15.5" cy="17" r="1.1" fill="currentColor" stroke="none"/></svg>
+    <span>달력</span>
+  </a>
+  <a href="picks.html" class="tab">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h11a1 1 0 011 1v15.2a.6.6 0 01-.93.5L12 16.6l-5.57 3.6a.6.6 0 01-.93-.5V4.5a1 1 0 011-1z"/><path d="M9.4 8.6l2.6 2.6 2.6-3.6"/></svg>
+    <span>추천</span>
+  </a>
+  <a href="admin.html" class="tab">
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.2l.9-3.6L15.3 6.2a1.6 1.6 0 012.3 0l1.1 1.1a1.6 1.6 0 010 2.3L8.3 19.9z"/><path d="M14.2 7.4l2.9 2.9M4.9 16.6l2.9 2.9"/></svg>
+    <span>등록</span>
+  </a>
+</nav>
+
+<script type="module" src="js/page-meeting.js?v=1786354993"></script>
 </body>
 </html>

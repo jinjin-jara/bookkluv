@@ -2,11 +2,10 @@
 
 import { listMeetings } from './api.js';
 import { spineColor } from './shelf.js';
-import { siteHead, esc, showError, mountNav, rise } from './ui.js';
+import { esc, showError, setupNav, rise, atLeast } from './ui.js';
 import { setupInstall } from './install.js';
 
 const root = document.getElementById('calendar');
-document.getElementById('head').innerHTML = siteHead('모임 달력', '어느 날 어떤 책으로 모였는지');
 
 const WEEK = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -17,10 +16,6 @@ let month; // 1~12
 
 const pad = (n) => String(n).padStart(2, '0');
 const iso = (y, m, d) => `${y}-${pad(m)}-${pad(d)}`;
-
-function monthsWithMeetings() {
-  return [...new Set(meetings.map((m) => String(m.date).slice(0, 7)))].sort().reverse();
-}
 
 function shift(delta) {
   const d = new Date(year, month - 1 + delta, 1);
@@ -34,7 +29,7 @@ function render() {
   const days = new Date(year, month, 0).getDate();
   const lead = first.getDay();
   const monthKey = `${year}-${pad(month)}`;
-  const count = meetings.filter((m) => String(m.date).startsWith(monthKey)).length;
+  const count = [...byDate.keys()].filter((k) => k.startsWith(monthKey)).length;
 
   const cells = [];
   for (let i = 0; i < lead; i++) cells.push('<div class="cal-cell is-blank"></div>');
@@ -52,7 +47,6 @@ function render() {
       cells.push(`
         <a class="${cls.join(' ')}" href="admin.html?date=${key}" title="${key}에 모임지 쓰기">
           <span class="cal-day">${d}</span>
-          <span class="cal-add" aria-hidden="true">+</span>
         </a>`);
       continue;
     }
@@ -61,12 +55,13 @@ function render() {
     cells.push(`
       <a class="${cls.join(' ')}" href="meeting.html?id=${encodeURIComponent(m.id)}"
          title="${esc(`${m.title} · ${m.author || '저자 미상'}`)}">
-        <span class="cal-day">${d}</span>
-        <span class="cal-book" style="--pad:${spineColor(m)}">${esc(m.title)}</span>
+        <span class="cal-day" style="--pad:${spineColor(m, m._seq, meetings.length)}">${d}</span>
+        <span class="cal-book">${esc(m.title)}</span>
+        ${m.author ? `<span class="cal-author">${esc(m.author)}</span>` : ''}
       </a>`);
   }
 
-  const marks = new Set(monthsWithMeetings());
+  const marks = new Set([...byDate.keys()].map((k) => k.slice(0, 7)));
 
   root.innerHTML = `
     <div class="cal-bar">
@@ -178,12 +173,14 @@ async function load() {
   skeleton();
 
   try {
-    meetings = await listMeetings();
+    meetings = await atLeast(listMeetings());
   } catch (err) {
     showError(root, '지금 달력을 불러오지 못했어요.', load);
     return;
   }
 
+  // 책장과 같은 색을 쓰려면 같은 순서 번호가 필요하다.
+  meetings.forEach((m, i) => { m._seq = i; });
   byDate = new Map(meetings.map((m) => [String(m.date), m]));
 
   // 가장 최근 모임이 있는 달부터 보여준다. 기록이 없으면 이번 달.
@@ -197,4 +194,4 @@ async function load() {
 
 load();
 setupInstall();
-mountNav();
+setupNav();

@@ -27,73 +27,10 @@ export function esc(text) {
     .replace(/"/g, '&quot;');
 }
 
-export function siteHead(title = '북끄럽', subtitle = '독서모임 아카이브') {
-  return `
-    <a class="site-head" href="index.html">
-      <img src="assets/mascot.png" alt="">
-      <div>
-        <h1>${esc(title)}</h1>
-        <p>${esc(subtitle)}</p>
-      </div>
-    </a>`;
-}
-
-// 선으로만 그린 아이콘. 굵기와 끝맺음을 맞춰 한 벌로 보이게 한다.
-const NAV = [
-  {
-    href: 'index.html',
-    label: '책장',
-    icon: `<rect x="4" y="5" width="4" height="12" rx="0.8"/>
-           <rect x="10" y="5" width="4" height="12" rx="0.8"/>
-           <rect x="16" y="5" width="4" height="12" rx="0.8"/>
-           <path d="M3 19.5h18"/>`,
-  },
-  {
-    href: 'calendar.html',
-    label: '달력',
-    icon: `<rect x="3.5" y="5.5" width="17" height="15" rx="2.2"/>
-           <path d="M3.5 10h17M8 3.5v4M16 3.5v4"/>
-           <circle cx="8.5" cy="14" r="1.1" fill="currentColor" stroke="none"/>
-           <circle cx="15.5" cy="17" r="1.1" fill="currentColor" stroke="none"/>`,
-  },
-  {
-    href: 'picks.html',
-    label: '추천',
-    icon: `<path d="M6.5 3.5h11a1 1 0 011 1v15.2a.6.6 0 01-.93.5L12 16.6l-5.57 3.6a.6.6 0 01-.93-.5V4.5a1 1 0 011-1z"/>
-           <path d="M9.4 8.6l2.6 2.6 2.6-3.6"/>`,
-  },
-  {
-    href: 'admin.html',
-    label: '등록',
-    icon: `<path d="M4 20.2l.9-3.6L15.3 6.2a1.6 1.6 0 012.3 0l1.1 1.1a1.6 1.6 0 010 2.3L8.3 19.9z"/>
-           <path d="M14.2 7.4l2.9 2.9M4.9 16.6l2.9 2.9"/>`,
-  },
-];
-
-/** 앱처럼 화면 아래 붙는 탭바. 현재 페이지가 켜진다. */
-export function bottomNav() {
-  const here = location.pathname.split('/').pop() || 'index.html';
-  return `
-    <nav class="tabbar" aria-label="주요 화면">
-      ${NAV.map(
-        (item) => `
-        <a href="${item.href}" class="tab${item.href === here ? ' is-on' : ''}">
-          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
-               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${item.icon}</svg>
-          <span>${item.label}</span>
-        </a>`
-      ).join('')}
-    </nav>`;
-}
-
 export const supportsViewTransition = 'startViewTransition' in document;
 
-/**
- * View Transitions를 못 쓰는 브라우저에서, 링크를 누르면 살짝 사라졌다가 넘어간다.
- * 쓸 수 있는 브라우저는 브라우저가 알아서 하니 건드리지 않는다.
- */
+/** 링크를 누르면 본문이 살짝 사라졌다가 다음 화면으로 넘어간다. */
 function setupLinkFade() {
-  if (supportsViewTransition) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   document.addEventListener('click', (e) => {
@@ -102,12 +39,52 @@ function setupLinkFade() {
 
     const url = new URL(link.href, location.href);
     if (url.origin !== location.origin) return;
-    if (url.hash && url.pathname === location.pathname) return; // 같은 페이지 앵커
+    if (url.hash && url.pathname === location.pathname) return;
 
     e.preventDefault();
     document.body.classList.add('is-leaving');
     setTimeout(() => { location.href = link.href; }, 130);
   });
+}
+
+/**
+ * 자리 표시가 깜빡이고 마는 걸 막는다.
+ * 응답이 빠르면 스켈레톤이 보이자마자 사라져 오히려 어수선하다.
+ */
+export function atLeast(promise, ms = 520) {
+  return Promise.all([promise, new Promise((r) => setTimeout(r, ms))]).then(([v]) => v);
+}
+
+const SCROLL_KEY = 'bookkluv:scroll';
+
+/** 떠나기 직전 스크롤 위치를 적어 둔다. 돌아오면 그 자리로 되돌린다. */
+function setupScrollMemory() {
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+  const here = location.pathname + location.search;
+  const save = () => {
+    try {
+      const all = JSON.parse(sessionStorage.getItem(SCROLL_KEY) || '{}');
+      all[here] = window.scrollY;
+      sessionStorage.setItem(SCROLL_KEY, JSON.stringify(all));
+    } catch (err) { /* 저장 못 해도 화면은 멀쩡하다 */ }
+  };
+
+  window.addEventListener('pagehide', save);
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('a[href]')) save();
+  }, true);
+}
+
+/** 목록을 다 그린 뒤에 부른다. 저장해 둔 위치가 있으면 그리로 간다. */
+export function restoreScroll() {
+  try {
+    const all = JSON.parse(sessionStorage.getItem(SCROLL_KEY) || '{}');
+    const y = all[location.pathname + location.search];
+    if (typeof y === 'number' && y > 0) {
+      requestAnimationFrame(() => window.scrollTo(0, y));
+    }
+  } catch (err) { /* 무시 */ }
 }
 
 /** 방금 그린 내용이 아래에서 올라오게 한다. */
@@ -132,11 +109,13 @@ export function siteFooter() {
     </footer>`;
 }
 
-/** 페이지마다 한 번 부르면 푸터와 탭바가 붙는다. */
-export function mountNav() {
-  document.querySelector('.wrap')?.insertAdjacentHTML('beforeend', siteFooter());
-  document.body.insertAdjacentHTML('beforeend', bottomNav());
+/**
+ * 헤더·탭바·푸터는 HTML에 직접 들어 있다. 자바스크립트로 그리면 문서가 뜬 뒤에야
+ * 나타나서 깜빡인다. 여기서는 동작만 붙인다.
+ */
+export function setupNav() {
   setupLinkFade();
+  setupScrollMemory();
 }
 
 export function showError(el, message, retry) {

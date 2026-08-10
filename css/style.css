@@ -12,8 +12,29 @@
   --shelf-back: #2a2320;
   --card: #fffefa;
   --shadow: rgba(28, 26, 23, 0.18);
-  --serif: 'Nanum Myeongjo', 'RIDIBatang', 'Apple SD Gothic Neo', serif;
+  --serif: 'Nanum Myeongjo', 'Apple SD Gothic Neo', serif;
   --sans: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', system-ui, sans-serif;
+
+  /* 화면 전체가 같은 규칙을 쓰도록 값을 한곳에 모은다 */
+  --r-sm: 6px;      /* 입력칸, 작은 카드 */
+  --r-md: 12px;     /* 카드, 모달 */
+  --r-pill: 999px;  /* 칩, 버튼 */
+
+  --control-h: 38px;            /* 칩·입력칸 높이를 맞춘다 */
+  --gap-x: 8px;
+  --gap-y: 10px;
+  --sec: 46px;                  /* 구획 사이 간격 */
+
+  --lift: 0 6px 18px -10px var(--shadow);
+  --lift-lg: 0 14px 32px -16px var(--shadow);
+  --ring: 0 0 0 3px color-mix(in srgb, var(--accent) 28%, transparent);
+}
+
+/* 키보드로 옮겨 다닐 때 지금 어디에 있는지 늘 보이게 */
+:where(a, button, input, textarea, select):focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--r-sm);
 }
 
 :root[data-theme='dark'],
@@ -66,7 +87,7 @@ a { color: inherit; }
 .wrap {
   max-width: 940px;
   margin: 0 auto;
-  padding: 0 20px 96px;
+  padding: 0 20px;
 }
 
 /* ── 사이트 헤더 ─────────────────────────── */
@@ -74,7 +95,7 @@ a { color: inherit; }
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 34px 0 22px;
+  padding: 30px 0 20px;
 }
 .site-head img {
   width: 46px;
@@ -93,41 +114,59 @@ a { color: inherit; }
   font-family: var(--sans);
 }
 
+/* 페이지 제목은 본문에 둔다. 헤더는 어느 화면에서나 같아야 전환이 매끄럽다. */
+.page-title { margin-bottom: 22px; }
+.page-title h2 {
+  font-size: 1.45rem;
+  margin: 0 0 4px;
+  letter-spacing: 0.01em;
+}
+.page-title p {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
 /* ── 검색 + 요일 필터 ────────────────────── */
 .toolbar {
   display: flex;
-  gap: 12px;
+  gap: var(--gap-x) var(--gap-y);
   align-items: center;
   flex-wrap: wrap;
   font-family: var(--sans);
-  margin-bottom: 18px;
+  margin-bottom: var(--gap-y);
 }
 .toolbar input[type='search'] {
   font-family: inherit;
   font-size: 0.9rem;
-  padding: 9px 14px;
+  height: var(--control-h);
+  padding: 0 16px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: var(--card);
   color: var(--ink);
-  min-width: 230px;
+  min-width: 220px;
   flex: 1;
+  transition: border-color 0.14s ease;
 }
-.toolbar input[type='search']:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-.chips { display: flex; gap: 6px; }
+.toolbar input[type='search']::placeholder { color: color-mix(in srgb, var(--ink-soft) 70%, transparent); }
+.toolbar input[type='search']:hover { border-color: color-mix(in srgb, var(--ink-soft) 45%, var(--rule)); }
+
+.chips { display: flex; gap: var(--gap-x); flex-wrap: wrap; }
 .chip {
-  font-family: inherit;
+  font-family: var(--sans);
   font-size: 0.82rem;
-  padding: 7px 14px;
+  height: var(--control-h);
+  padding: 0 16px;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   background: transparent;
   color: var(--ink-soft);
   cursor: pointer;
+  transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
 }
+.chip:hover { border-color: var(--ink-soft); color: var(--ink); }
 .chip[aria-pressed='true'] {
   background: var(--ink);
   color: var(--paper);
@@ -143,92 +182,47 @@ a { color: inherit; }
 /* ── 연도 바로가기 ───────────────────────── */
 .years {
   display: flex;
-  gap: 8px;
+  gap: var(--gap-x);
   flex-wrap: wrap;
-  font-family: var(--sans);
-  font-size: 0.85rem;
-  padding-bottom: 26px;
+  padding-bottom: 22px;
   border-bottom: 1px solid var(--rule);
-  margin-bottom: 40px;
+  margin-bottom: var(--sec);
 }
-.years a {
-  text-decoration: none;
-  padding: 5px 13px;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  color: var(--ink-soft);
-}
-.years a:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ── 책장 ────────────────────────────────── */
-.year-block { margin-bottom: 64px; }
+/* 도서관 서가 팻말처럼, 해가 바뀌는 자리에 세워 둔다 */
 
-.year-title {
-  font-family: var(--sans);
-  font-weight: 800;
-  font-size: 2rem;
-  letter-spacing: 0.06em;
-  margin: 0 0 14px 4px;
-}
-.year-title span { color: var(--ink-soft); font-weight: 400; font-size: 0.9rem; margin-left: 10px; letter-spacing: 0; }
 
 .bookcase {
-  --row: 196px;
-  --board: 11px;
-  /* 나무결: 굵은 결 + 잔결 + 색층을 겹쳐 만든다 */
-  --grain:
-    repeating-linear-gradient(90deg,
-      rgba(255, 255, 255, 0.05) 0 2px,
-      rgba(0, 0, 0, 0.05) 2px 3px,
-      rgba(0, 0, 0, 0) 3px 7px),
-    repeating-linear-gradient(90deg,
-      rgba(90, 45, 18, 0.5) 0 1px,
-      rgba(0, 0, 0, 0) 1px 13px,
-      rgba(120, 60, 24, 0.35) 13px 15px,
-      rgba(0, 0, 0, 0) 15px 34px),
-    repeating-linear-gradient(90deg,
-      rgba(60, 28, 10, 0.35) 0 1px,
-      rgba(0, 0, 0, 0) 1px 47px);
-  --wood-face: var(--grain),
-    linear-gradient(90deg, #b0703f 0%, #9a5c31 22%, #b5764a 46%, #90542b 70%, #a96a3c 100%);
-
-  background:
-    /* 선반 널: 각 칸 아래에 나무 판 */
-    repeating-linear-gradient(180deg,
-      rgba(0, 0, 0, 0) 0,
-      rgba(0, 0, 0, 0) calc(var(--row) - var(--board)),
-      rgba(0, 0, 0, 0.34) calc(var(--row) - var(--board)),
-      rgba(0, 0, 0, 0.1) calc(var(--row) - var(--board) + 2px),
-      rgba(255, 255, 255, 0.14) calc(var(--row) - 3px),
-      rgba(0, 0, 0, 0.45) var(--row)),
-    repeating-linear-gradient(180deg,
-      var(--shelf-back) 0,
-      var(--shelf-back) calc(var(--row) - var(--board)),
-      #a3653a calc(var(--row) - var(--board)),
-      #7d4622 var(--row));
-  border: 10px solid #7d4622;
-  border-radius: 4px;
-  padding: 0 12px;
-  box-shadow:
-    0 14px 30px var(--shadow),
-    inset 0 0 40px rgba(0, 0, 0, 0.6);
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
+  --row: 296px;
+  --board: 12px;
+  background: linear-gradient(180deg, #8f5b32 0%, #7a4a27 100%);
+  border: 11px solid #7a4a27;
+  border-radius: 5px;
+  padding: 0;
+  box-shadow: 0 14px 30px var(--shadow);
   overflow: hidden;
-  min-height: var(--row);
   position: relative;
 }
 
-/* 책장 테두리에 나무결을 입힌다 */
+/* 책장 테두리에 나무결 */
 .bookcase::before {
   content: '';
   position: absolute;
-  inset: -10px;
-  border: 10px solid transparent;
-  border-radius: 4px;
-  background: var(--wood-face);
-  background-clip: border-box;
+  inset: -11px;
+  border: 11px solid transparent;
+  border-radius: 5px;
+  background:
+    repeating-linear-gradient(90deg,
+      rgba(255, 255, 255, 0.06) 0 2px,
+      rgba(0, 0, 0, 0.06) 2px 3px,
+      rgba(0, 0, 0, 0) 3px 9px),
+    repeating-linear-gradient(90deg,
+      rgba(80, 42, 18, 0.45) 0 1px,
+      rgba(0, 0, 0, 0) 1px 17px,
+      rgba(120, 66, 28, 0.3) 17px 19px,
+      rgba(0, 0, 0, 0) 19px 41px),
+    linear-gradient(90deg, #a06a3c 0%, #8a5730 30%, #a97544 60%, #855128 100%);
   -webkit-mask:
     linear-gradient(#000 0 0) border-box,
     linear-gradient(#000 0 0) padding-box;
@@ -238,12 +232,56 @@ a { color: inherit; }
   z-index: 3;
 }
 
-/* 한 칸 높이를 고정해야 나무 선반이 책 줄과 맞는다 */
+/* 한 해가 한 줄. 줄 위쪽에 팻말이 붙고 아래에 나무 널이 깔린다. */
+.shelf-year {
+  position: relative;
+  isolation: isolate;
+  background:
+    repeating-linear-gradient(180deg,
+      rgba(0, 0, 0, 0) 0,
+      rgba(0, 0, 0, 0) calc(var(--row) - var(--board)),
+      rgba(0, 0, 0, 0.3) calc(var(--row) - var(--board)),
+      rgba(255, 255, 255, 0.12) calc(var(--row) - 3px),
+      rgba(0, 0, 0, 0.4) var(--row)),
+    repeating-linear-gradient(180deg,
+      #2a2320 0,
+      #2a2320 calc(var(--row) - var(--board)),
+      #a3653a calc(var(--row) - var(--board)),
+      #7d4622 var(--row));
+  box-shadow: inset 0 0 34px rgba(0, 0, 0, 0.55);
+  padding: 0 14px;
+  scroll-margin-top: 90px;
+}
+.shelf-year.is-empty { display: none; }
+
+/* 줄 왼쪽 위에 연도만 적는다 */
+.year-label {
+  position: absolute;
+  pointer-events: none;
+  top: 11px;
+  left: 18px;
+  z-index: 2;
+  font-family: var(--sans);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: rgba(240, 224, 200, 0.55);
+}
+
+/* 책은 팻말에 가리지 않게 아래에서부터 채운다 */
+.shelf-books {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  min-height: var(--row);
+}
+
+/* 한 칸 높이를 고정해야 나무 널이 책 줄과 맞는다 */
 .slot {
   height: var(--row);
   display: flex;
   align-items: flex-end;
-  padding-bottom: 9px;
+  padding-bottom: 10px;
   margin-right: 3px;
   transition: width 0.28s ease, opacity 0.2s ease, margin 0.28s ease;
   overflow: hidden;
@@ -267,8 +305,8 @@ a { color: inherit; }
   align-items: flex-start;   /* 글자를 위에서부터 채운다 */
   justify-content: center;
   font-family: var(--serif);
-  color: #14110e;
-  box-shadow: inset -4px 0 8px rgba(0, 0, 0, 0.16), inset 3px 0 0 rgba(255, 255, 255, 0.35);
+  color: #fdf8ee;
+  box-shadow: inset -5px 0 10px rgba(0, 0, 0, 0.22), inset 3px 0 0 rgba(255, 255, 255, 0.28);
   transition: transform 0.16s ease, box-shadow 0.16s ease;
   text-decoration: none;
   overflow: hidden;   /* 넘치면 책등이 자른다. 세로쓰기에서 max-height는 축이 뒤집혀 못 쓴다 */
@@ -290,7 +328,6 @@ a { color: inherit; }
   max-height: 100%;
   word-break: keep-all;
   overflow-wrap: break-word;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .empty-shelf {
@@ -314,15 +351,59 @@ a { color: inherit; }
 .pick-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(232px, 1fr));
-  gap: 16px;
+  gap: 14px;
+}
+.pick:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--rule));
+  box-shadow: var(--lift);
+  transform: translateY(-2px);
 }
 .pick {
   background: var(--card);
   border: 1px solid var(--rule);
-  border-radius: 4px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition: border-color 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease;
   padding: 18px 18px 14px;
   position: relative;
 }
+.pick.has-thumb { padding: 0; }
+.pick-body { padding: 18px 18px 14px; display: block; }
+.pick.has-thumb .pick-body { padding-top: 14px; }
+
+.pick-thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  background: var(--rule);
+}
+.pick-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pick-play {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 46px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(20, 17, 14, 0.72);
+}
+.pick-play::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 0;
+  height: 0;
+  border-left: 11px solid #fff;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  transform: translateX(2px);
+}
+.pick-thumb:hover .pick-play { background: rgba(180, 71, 46, 0.85); }
+
+a.pick-title { text-decoration: none; display: block; }
+a.pick-title:hover { color: var(--accent); }
+
 .pick-kind {
   font-family: var(--sans);
   font-size: 0.68rem;
@@ -446,7 +527,7 @@ a { color: inherit; }
 }
 .note-modal {
   background: var(--card);
-  border-radius: 4px;
+  border-radius: var(--r-md);
   width: min(620px, 100%);
   max-height: 86vh;
   overflow-y: auto;
@@ -499,9 +580,9 @@ a { color: inherit; }
   display: flex;
   gap: 28px;
   align-items: flex-start;
-  padding: 40px 0 30px;
+  padding: 8px 0 22px;
   border-bottom: 2px solid var(--ink);
-  margin-bottom: 46px;
+  margin-bottom: 26px;
 }
 .meeting-head .cover {
   width: 128px;
@@ -529,7 +610,7 @@ a { color: inherit; }
   background: var(--card);
   border: 1px solid var(--rule);
   border-left: 3px solid var(--ink);
-  border-radius: 2px 10px 2px 2px;
+  border-radius: 2px var(--r-md) var(--r-sm) var(--r-sm);
   padding: 26px 30px 28px;
   box-shadow: 2px 3px 0 rgba(28, 26, 23, 0.05), 0 8px 20px -14px var(--shadow);
 }
@@ -644,7 +725,7 @@ a { color: inherit; }
   font-size: 0.86rem;
   padding: 9px 11px;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   background: transparent;
   color: var(--ink);
 }
@@ -657,7 +738,7 @@ a { color: inherit; }
   font-size: 0.82rem;
   padding: 0 16px;
   border: 1px solid var(--ink);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
@@ -692,12 +773,13 @@ a { color: inherit; }
   padding-top: 30px;
 }
 
-.year-block.is-empty { display: none; }
 
 @media (max-width: 700px) {
-  .bookcase { --row: 156px; padding: 0 8px; border-width: 6px; }
-  .slot { padding-bottom: 7px; margin-right: 2px; }
-  .year-title { font-size: 1.5rem; }
+  .bookcase { --row: 240px; border-width: 7px; }
+  .shelf-year { padding: 0 9px; }
+  .slot { height: var(--row); padding-bottom: 8px; margin-right: 2px; }
+  .year-label { top: 9px; left: 12px; font-size: 0.76rem; }
+
   .meeting-head { flex-direction: column; gap: 18px; }
   .meeting-title { font-size: 1.45rem; }
   .comments { margin-left: 0; padding-left: 14px; }
@@ -786,7 +868,8 @@ a { color: inherit; }
   flex-direction: column;
   gap: 22px;
   font-family: var(--sans);
-  max-width: 680px;
+  max-width: 620px;
+  margin: 0 auto;
 }
 .field-row { display: flex; gap: 14px; }
 .field-row .field { flex: 1; }
@@ -809,7 +892,7 @@ a { color: inherit; }
   font-size: 0.92rem;
   padding: 11px 13px;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   background: var(--card);
   color: var(--ink);
   width: 100%;
@@ -820,7 +903,7 @@ a { color: inherit; }
   resize: vertical;
 }
 .field input:focus,
-.field textarea:focus { outline: none; border-color: var(--accent); }
+.field textarea:focus { border-color: var(--accent); }
 
 .with-btn { display: flex; gap: 7px; }
 .with-btn button {
@@ -829,7 +912,7 @@ a { color: inherit; }
   font-size: 0.85rem;
   padding: 0 16px;
   border: 1px solid var(--ink);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
@@ -841,14 +924,13 @@ a { color: inherit; }
   display: flex;
   flex-direction: column;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   overflow: hidden;
 }
 .search-results .result {
   display: flex;
-  flex-direction: column;
-  gap: 3px;
-  align-items: flex-start;
+  gap: 12px;
+  align-items: center;
   text-align: left;
   font-family: inherit;
   padding: 12px 14px;
@@ -859,8 +941,18 @@ a { color: inherit; }
 }
 .search-results .result:last-child { border-bottom: none; }
 .search-results .result:hover { background: var(--paper); }
+.search-results .result img,
+.search-results .result .result-nocover {
+  width: 36px;
+  height: 50px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  border-radius: 2px;
+  background: var(--rule);
+}
+.result-text { display: flex; flex-direction: column; gap: 3px; }
 .search-results .result b { font-size: 0.92rem; font-weight: 600; }
-.search-results .result span { font-size: 0.76rem; color: var(--ink-soft); }
+.search-results .result .result-text span { font-size: 0.76rem; color: var(--ink-soft); }
 
 .form-actions { display: flex; gap: 9px; }
 .form-actions button {
@@ -869,7 +961,7 @@ a { color: inherit; }
   font-weight: 600;
   padding: 12px 22px;
   border: 1px solid var(--ink);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
@@ -910,7 +1002,7 @@ a { color: inherit; }
   line-height: 1.75;
   padding: 10px 12px;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   background: var(--card);
   color: var(--ink);
   resize: vertical;
@@ -964,7 +1056,7 @@ a { color: inherit; }
 .tab.is-on { color: var(--accent); }
 
 /* 탭바에 가리지 않게 아래를 비워둔다 */
-.wrap { padding-bottom: 120px; }
+.wrap { padding-bottom: 96px; }
 
 @media (min-width: 700px) {
   .tabbar {
@@ -1000,11 +1092,12 @@ a { color: inherit; }
 .state.is-loading { padding: 50px 20px; }
 .state-retry {
   margin-top: 16px;
-  font-family: inherit;
+  font-family: var(--sans);
   font-size: 0.85rem;
-  padding: 9px 18px;
+  height: var(--control-h);
+  padding: 0 20px;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: var(--r-pill);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
@@ -1093,15 +1186,12 @@ a { color: inherit; }
 .form-msg.is-error { color: var(--accent); }
 
 /* ── 화면 전환 ───────────────────────────── */
-/* 크롬 계열은 페이지를 넘길 때 브라우저가 직접 섞어준다. */
-@view-transition { navigation: auto; }
-
-::view-transition-old(root) {
-  animation: page-out 0.16s ease both;
-}
-::view-transition-new(root) {
-  animation: page-in 0.32s cubic-bezier(0.2, 0.8, 0.25, 1) both;
-}
+/*
+ * 문서 사이 View Transitions는 쓰지 않는다.
+ * 새 문서의 첫 페인트를 전환이 끝날 때까지 미루기 때문에, 로딩 자리 표시가
+ * 화면에 뜨지도 못하고 사라진다. 대신 나갈 때 살짝 흐려지고 들어올 때
+ * 아래에서 올라오는 방식으로 직접 처리한다.
+ */
 @keyframes page-out {
   to { opacity: 0; transform: translateY(-6px); }
 }
@@ -1113,6 +1203,14 @@ a { color: inherit; }
 /* View Transitions가 없는 브라우저와, 자바스크립트로 그린 내용용 */
 .rise {
   animation: rise-in 0.42s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}
+
+/* 페이지가 열릴 때 본문 전체가 한 번 올라온다 */
+.wrap > *:not(header):not(.site-foot) {
+  animation: page-in 0.34s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wrap > * { animation: none !important; }
 }
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(16px); }
@@ -1134,11 +1232,10 @@ a { color: inherit; }
 /* 움직임을 줄여달라고 한 사람에게는 애니메이션을 걷어낸다 */
 @media (prefers-reduced-motion: reduce) {
   .rise, .stagger > *, .note, .book, .slot { animation: none !important; transition: none !important; }
-  ::view-transition-old(root), ::view-transition-new(root) { animation: none !important; }
 }
 
 /* 링크를 눌러 떠나는 중 (View Transitions 폴백) */
-body.is-leaving .wrap {
+body.is-leaving .wrap > *:not(header):not(.site-foot) {
   opacity: 0;
   transform: translateY(-6px);
   transition: opacity 0.13s ease, transform 0.13s ease;
@@ -1146,8 +1243,8 @@ body.is-leaving .wrap {
 
 /* ── 푸터 ────────────────────────────────── */
 .site-foot {
-  margin-top: 70px;
-  padding-top: 22px;
+  margin-top: 46px;
+  padding-top: 18px;
   border-top: 1px solid var(--rule);
   font-family: var(--sans);
   font-size: 0.76rem;
@@ -1170,9 +1267,9 @@ body.is-leaving .wrap {
 .sk-book {
   background: linear-gradient(
     100deg,
-    var(--rule) 20%,
-    color-mix(in srgb, var(--rule) 45%, var(--paper)) 40%,
-    var(--rule) 60%
+    color-mix(in srgb, var(--rule) 85%, var(--ink)) 20%,
+    color-mix(in srgb, var(--rule) 40%, var(--paper)) 42%,
+    color-mix(in srgb, var(--rule) 85%, var(--ink)) 62%
   );
   background-size: 220% 100%;
   animation: sk-slide 1.25s ease-in-out infinite;
@@ -1251,7 +1348,7 @@ body.is-leaving .wrap {
 }
 .picker {
   background: var(--card);
-  border-radius: 12px;
+  border-radius: var(--r-md);
   padding: 18px;
   width: min(340px, 100%);
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
@@ -1314,89 +1411,116 @@ body.is-leaving .wrap {
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 5px;
+  gap: 2px 0;
 }
 .cal-head {
   font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.68rem;
+  font-weight: 600;
   color: var(--ink-soft);
   text-align: center;
-  padding-bottom: 6px;
+  padding-bottom: 12px;
+  opacity: 0.75;
 }
 .cal-head.is-sun, .cal-cell.is-sun .cal-day { color: #c0563c; }
-.cal-head.is-sat, .cal-cell.is-sat .cal-day { color: #4a7fa5; }
+.cal-head.is-sat, .cal-cell.is-sat .cal-day { color: #5b86a8; }
 
+/* 칸 자체는 선을 두지 않는다. 날짜와 책 이름만 남긴다. */
 .cal-cell {
-  min-height: 84px;
-  border: 1px solid var(--rule);
-  border-radius: 4px;
-  padding: 7px 7px 8px;
-  background: var(--card);
+  min-height: 74px;
+  padding: 4px 2px 6px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 5px;
   text-decoration: none;
   color: inherit;
+  border-radius: 10px;
+  transition: background 0.14s ease;
 }
-.cal-cell.is-blank { border: none; background: none; min-height: 0; }
+.cal-cell.is-blank { min-height: 0; }
+
 .cal-day {
   font-family: var(--sans);
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: var(--ink-soft);
-}
-.cal-cell.has-meeting {
-  cursor: pointer;
-  transition: transform 0.14s ease, box-shadow 0.14s ease;
-}
-.cal-cell.has-meeting:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 14px var(--shadow);
-  border-color: var(--accent);
-}
-.cal-book {
-  background: var(--pad, #f6e08c);
-  border-radius: 3px;
-  padding: 5px 6px;
-  font-size: 0.72rem;
-  line-height: 1.35;
-  color: #2b2519;
-  flex: 1;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
-.cal-cell.is-empty {
-  position: relative;
-  transition: background 0.14s ease, border-color 0.14s ease;
-}
-.cal-add {
-  position: absolute;
-  inset: 0;
+  width: 27px;
+  height: 27px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--sans);
-  font-size: 1.1rem;
-  color: var(--ink-soft);
-  opacity: 0;
-  transition: opacity 0.14s ease;
+  border-radius: 50%;
 }
-.cal-cell.is-empty:hover {
-  background: color-mix(in srgb, var(--accent) 7%, var(--card));
-  border-color: var(--accent);
-}
-.cal-cell.is-empty:hover .cal-add { opacity: 0.7; }
 
-.cal-sk { min-height: 84px; border-radius: 4px; }
+/* 표지가 있으면 표지를, 없으면 책등 색 동그라미를 둔다 */
+.cal-cover {
+  position: relative;
+  width: 34px;
+  height: 46px;
+  border-radius: 3px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px var(--shadow);
+}
+.cal-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cal-cover .cal-day {
+  position: absolute;
+  left: 50%;
+  bottom: -1px;
+  transform: translateX(-50%);
+  width: auto;
+  height: auto;
+  padding: 1px 5px 2px;
+  border-radius: 6px 6px 0 0;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.cal-cell.has-cover { gap: 4px; }
+
+/* 모임이 있던 날은 책등 색 동그라미를 두른다 */
+.cal-cell.has-meeting .cal-day {
+  background: var(--pad);
+  color: #2b2519;
+  font-weight: 700;
+}
+.cal-book {
+  font-size: 0.66rem;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--ink-soft);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  padding: 0 2px;
+}
+.cal-cell.has-meeting:hover { background: color-mix(in srgb, var(--rule) 40%, transparent); }
+.cal-cell.has-meeting:hover .cal-book { color: var(--ink); }
+
+.cal-cell.is-empty:hover { background: color-mix(in srgb, var(--rule) 26%, transparent); }
+.cal-cell.is-empty:hover .cal-day { color: var(--accent); }
+
+.cal-author {
+  font-size: 0.6rem;
+  line-height: 1.25;
+  text-align: center;
+  color: color-mix(in srgb, var(--ink-soft) 80%, transparent);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  padding: 0 2px;
+}
+.cal-sk { min-height: 74px; border-radius: var(--r-md); opacity: 0.75; }
 
 @media (max-width: 700px) {
-  .cal-grid { gap: 3px; }
-  .cal-cell { min-height: 62px; padding: 4px 4px 5px; border-radius: 3px; }
-  .cal-book { font-size: 0.6rem; padding: 3px 4px; -webkit-line-clamp: 2; }
-  .cal-day { font-size: 0.64rem; }
-  .cal-title { font-size: 1.25rem; }
+  .cal-cell { min-height: 62px; padding: 3px 1px 5px; gap: 3px; }
+  .cal-cover { width: 28px; height: 38px; }
+  .cal-cover .cal-day { font-size: 0.58rem; padding: 0 4px 1px; }
+  .cal-day { width: 24px; height: 24px; font-size: 0.72rem; }
+  .cal-book { font-size: 0.56rem; -webkit-line-clamp: 2; }
+  .cal-author { display: none; }   /* 좁은 화면에서는 제목만 */
 }
 
 /* ── 추천 남기기 버튼 ────────────────────── */
@@ -1440,13 +1564,19 @@ body.is-leaving .wrap {
   font-size: 0.82rem;
   color: var(--ink-soft);
 }
-.pick-form { padding: 20px 26px 26px; gap: 16px; }
+.pick-form { padding: 20px 26px 26px; gap: 16px; max-width: none; }
+input.is-loading {
+  background-image: linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--accent) 12%, transparent) 50%, transparent 100%);
+  background-size: 180% 100%;
+  animation: sk-slide 1s ease-in-out infinite;
+}
+
 .pick-form select {
   font-family: var(--sans);
   font-size: 0.92rem;
   padding: 11px 13px;
   border: 1px solid var(--rule);
-  border-radius: 3px;
+  border-radius: var(--r-sm);
   background: var(--card);
   color: var(--ink);
   width: 100%;

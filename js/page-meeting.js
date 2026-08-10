@@ -4,11 +4,10 @@ import { getMeeting, listComments, addComment, updateComment, deleteComment } fr
 import { maskName } from './mask.js';
 import { isClean } from './profanity.js';
 import { getNickname, setNickname, isEditable } from './nickname.js';
-import { siteHead, esc, formatMeetingDate, formatShort, showError, showEmpty, mountNav, rise, skeletonShelf, skeletonCards, skeletonNotes } from './ui.js';
+import { esc, formatMeetingDate, formatShort, showError, showEmpty, setupNav, rise, atLeast, skeletonNotes } from './ui.js';
 import { setupInstall } from './install.js';
 
 const root = document.getElementById('meeting');
-document.getElementById('head').innerHTML = siteHead();
 
 const meetingId = new URLSearchParams(location.search).get('id');
 
@@ -19,7 +18,7 @@ const commentsFor = (target) => comments.filter((c) => c.target === target);
 
 function renderMeeting() {
   const picked = meeting.picked_by
-    ? ` · 고른 사람 ${esc(maskName(meeting.picked_by))}`
+    ? ` · 선정자 ${esc(maskName(meeting.picked_by))}`
     : '';
   const pages = meeting.pages ? ` · ${meeting.pages}쪽` : '';
 
@@ -212,7 +211,7 @@ async function load() {
 
   skeletonNotes(root);
   try {
-    meeting = await getMeeting(meetingId);
+    meeting = await atLeast(getMeeting(meetingId));
   } catch (err) {
     showError(root, '지금 모임지를 불러오지 못했어요.', load);
     return;
@@ -241,4 +240,4 @@ async function load() {
 
 load();
 setupInstall();
-mountNav();
+setupNav();

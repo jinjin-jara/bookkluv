@@ -1,5 +1,12 @@
 -- 북끄럽 아카이브 — 테이블 + RLS
 -- Supabase 대시보드 > SQL Editor 에 통째로 붙여넣고 실행.
+--
+-- 이미 만든 뒤에 컬럼만 추가한다면:
+--   alter table meetings add column if not exists cover_url text;
+--   alter table picks add column if not exists url text;
+--   alter table picks drop constraint if exists picks_kind_check;
+--   alter table picks add constraint picks_kind_check
+--     check (kind in ('book', 'movie', 'video', 'etc'));
 
 create table if not exists meetings (
   id          uuid primary key default gen_random_uuid(),
@@ -7,6 +14,7 @@ create table if not exists meetings (
   title       text not null,
   author      text not null default '',
   pages       int,
+  cover_url   text,                                -- 표지 이미지. 없으면 색으로 대신한다
   picked_by   text,                                -- 책 고른 사람. 화면에는 마스킹해서 나온다
   questions   jsonb not null default '[]'::jsonb,
   created_at  timestamptz not null default now()
@@ -16,10 +24,11 @@ create table if not exists meetings (
 create table if not exists picks (
   id             uuid primary key default gen_random_uuid(),
   meeting_id     uuid references meetings(id) on delete set null,
-  kind           text not null default 'book' check (kind in ('book', 'movie', 'etc')),
+  kind           text not null default 'book' check (kind in ('book', 'movie', 'video', 'etc')),
   title          text not null,
   creator        text not null default '',
   note           text not null default '',
+  url            text,                              -- 유튜브 등 링크. 있으면 썸네일을 보여준다
   recommended_by text,
   created_at     timestamptz not null default now()
 );

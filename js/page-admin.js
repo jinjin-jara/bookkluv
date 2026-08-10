@@ -3,10 +3,9 @@
 import { createMeeting } from './api.js';
 import { parseQuestions } from './parser.js';
 import { searchBooks } from './booksearch.js';
-import { siteHead, esc, mountNav } from './ui.js';
+import { esc, setupNav } from './ui.js';
 
 const $ = (id) => document.getElementById(id);
-document.getElementById('head').innerHTML = siteHead('모임지 등록', '줄글을 붙여넣으면 질문으로 나눠드려요');
 
 // 달력에서 날짜를 눌러 왔으면 그 날짜로 채운다.
 const wanted = new URLSearchParams(location.search).get('date');
@@ -60,15 +59,34 @@ $('f-search').addEventListener('click', async () => {
 });
 
 // ── 질문 나누기 ──────────────────────────
-$('f-parse').addEventListener('click', () => {
-  const result = parseQuestions($('f-raw').value);
+// 붙여넣거나 고치는 즉시 나눈다. 한글 조합 중에는 기다린다.
+const raw = $('f-raw');
+let composing = false;
+let parseTimer = null;
+
+function reparse() {
+  const result = parseQuestions(raw.value);
   questions = result.questions;
   renderPreview(result.warnings);
-});
+}
+
+function scheduleParse() {
+  clearTimeout(parseTimer);
+  parseTimer = setTimeout(reparse, 250);
+}
+
+raw.addEventListener('compositionstart', () => { composing = true; });
+raw.addEventListener('compositionend', () => { composing = false; scheduleParse(); });
+raw.addEventListener('input', () => { if (!composing) scheduleParse(); });
+raw.addEventListener('paste', () => setTimeout(reparse, 0));
 
 function renderPreview(warnings = []) {
+  if (!raw.value.trim()) {
+    $('f-preview').innerHTML = '';
+    return;
+  }
   if (!questions.length) {
-    $('f-preview').innerHTML = '<p class="parse-warn">질문을 못 찾았어요. 줄글을 확인해주세요.</p>';
+    $('f-preview').innerHTML = '<p class="parse-warn">아직 질문을 못 찾았어요. Q1. 이나 1. 같은 머리표가 있으면 더 잘 나눕니다.</p>';
     return;
   }
 
@@ -109,7 +127,7 @@ $('admin-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   if (!questions.length) {
-    return message('먼저 "질문 나누기"를 눌러 이야깃거리를 확인해주세요.', 'error');
+    return message('이야깃거리를 붙여넣어주세요.', 'error');
   }
 
   const submit = $('f-submit');
@@ -135,4 +153,4 @@ $('admin-form').addEventListener('submit', async (e) => {
   }
 });
 
-mountNav();
+setupNav();

@@ -1,17 +1,15 @@
 // 책장 목록 화면.
 
 import { listMeetings } from './api.js';
-import { spineWidth, spineHeight, spineColor, spineFontSize, spineMarkup, groupByYear } from './shelf.js';
-import { siteHead, esc, dayOf, DAY_NAMES, showError, showEmpty, mountNav, rise, skeletonShelf, skeletonCards, skeletonNotes } from './ui.js';
+import { spineColor, spineLayout, spineMarkup, groupByYear } from './shelf.js';
+import { esc, dayOf, DAY_NAMES, showError, showEmpty, setupNav, rise, restoreScroll, atLeast, skeletonShelf } from './ui.js';
 import { setupInstall } from './install.js';
 
 const shelvesEl = document.getElementById('shelves');
-const yearsEl = document.getElementById('years');
 const daysEl = document.getElementById('days');
 const nohitEl = document.getElementById('nohit');
 const searchBox = document.getElementById('q');
 
-document.getElementById('head').innerHTML = siteHead();
 
 const activeDays = new Set();
 let query = '';
@@ -19,17 +17,14 @@ let meetings = [];
 
 const scaleOf = () => (window.innerWidth < 700 ? 0.78 : 1);
 
-function bookHTML(m) {
-  const k = scaleOf();
-  const w = Math.max(20, Math.round(spineWidth(m.pages) * k));
-  const h = Math.round(spineHeight(m.title) * k);
-  const fs = spineFontSize(m.title, h, w, k);
+function bookHTML(m, index, total) {
+  const { width: w, height: h, fontSize: fs } = spineLayout(m, scaleOf());
   const key = `${m.title} ${m.author || ''}`.toLowerCase();
   const tip = `${m.title} · ${m.author || '저자 미상'} · ${m.date} ${dayOf(m.date)}요모임`;
 
   return `<div class="slot" style="width:${w}px" data-date="${esc(m.date)}" data-key="${esc(key)}">
     <a class="book" href="meeting.html?id=${encodeURIComponent(m.id)}"
-      style="height:${h}px;background:${spineColor(m)};--spine-size:${fs}px"
+      style="height:${h}px;background:${spineColor(m, index, total)};--spine-size:${fs}px"
       title="${esc(tip)}">
       <span class="spine-text">${spineMarkup(esc(m.title))}</span></a>
   </div>`;
@@ -63,35 +58,39 @@ function matches(date, key) {
 // 책은 한 번만 그린다. 이후 필터는 클래스 토글이라 폭이 부드럽게 접힌다.
 function renderShelves() {
   const groups = groupByYear(meetings);
-  yearsEl.innerHTML = groups.map((g) => `<a href="#y${g.year}">${g.year}</a>`).join('');
 
-  shelvesEl.innerHTML = groups
-    .map(
-      (g) => `
-    <section class="year-block" id="y${g.year}">
-      <h2 class="year-title">${g.year} BOOKS<span class="count"></span></h2>
-      <div class="bookcase">${g.items.map(bookHTML).join('')}</div>
-    </section>`
-    )
-    .join('');
+  // 책장은 하나지만, 해가 다르면 줄을 나눈다. 줄마다 위에 팻말을 붙인다.
+  let seq = 0;
+  const rows = groups.map((g) => {
+    const books = g.items.map((m) => bookHTML(m, seq++, meetings.length)).join('');
+    return `
+      <section class="shelf-year" id="y${g.year}" data-year="${g.year}">
+        <span class="year-label">${g.year}</span>
+        <div class="shelf-books">${books}</div>
+      </section>`;
+  });
 
-  rise(shelvesEl, true);
+  shelvesEl.innerHTML = `<div class="bookcase">${rows.join('')}</div>`;
+
+  rise(shelvesEl);
   applyFilter();
 }
 
 function applyFilter() {
   let total = 0;
-  document.querySelectorAll('.year-block').forEach((block) => {
+
+  document.querySelectorAll('.shelf-year').forEach((row) => {
     let shown = 0;
-    block.querySelectorAll('.slot').forEach((slot) => {
+    row.querySelectorAll('.slot').forEach((slot) => {
       const ok = matches(slot.dataset.date, slot.dataset.key);
       slot.classList.toggle('is-out', !ok);
       if (ok) shown++;
     });
-    block.classList.toggle('is-empty', shown === 0);
-    block.querySelector('.count').textContent = `${shown}권`;
+    // 그 해에 남은 책이 없으면 줄째로 접는다
+    row.classList.toggle('is-empty', shown === 0);
     total += shown;
   });
+
   nohitEl.hidden = total > 0;
 }
 
@@ -125,7 +124,7 @@ window.addEventListener('resize', () => {
 async function load() {
   skeletonShelf(shelvesEl);
   try {
-    meetings = await listMeetings();
+    meetings = await atLeast(listMeetings());
   } catch (err) {
     showError(shelvesEl, '지금 책장을 불러오지 못했어요.', load);
     return;
@@ -138,8 +137,9 @@ async function load() {
 
   renderDayChips();
   renderShelves();
+  restoreScroll();
 }
 
 load();
 setupInstall();
-mountNav();
+setupNav();

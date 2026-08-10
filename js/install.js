@@ -70,7 +70,17 @@ function showModal(mode) {
   });
 }
 
+const DEV = ['localhost', '127.0.0.1'].includes(location.hostname);
+
 export function setupInstall() {
+  // 로컬에서는 예전에 등록된 워커가 낡은 파일을 물고 있을 수 있다. 지운다.
+  if (DEV && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then((rs) => rs.forEach((r) => r.unregister()))
+      .catch(() => {});
+    return;
+  }
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js').catch(() => {});

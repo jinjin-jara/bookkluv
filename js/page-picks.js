@@ -2,17 +2,17 @@
 
 import { listPicks, addPick, listMeetings } from './api.js';
 import { maskName } from './mask.js';
+import { youtubeId, youtubeThumb, fetchYoutubeInfo } from './picks-util.js';
 import { isClean } from './profanity.js';
 import { getNickname, setNickname } from './nickname.js';
-import { siteHead, esc, showError, showEmpty, mountNav, rise, skeletonShelf, skeletonCards, skeletonNotes } from './ui.js';
+import { esc, showError, showEmpty, setupNav, rise, restoreScroll, atLeast, skeletonCards } from './ui.js';
 import { setupInstall } from './install.js';
 
-const KIND_LABEL = { book: '책', movie: '영화', etc: '그 외' };
+const KIND_LABEL = { book: '책', movie: '영화', video: '영상', etc: '그 외' };
 
 const gridEl = document.getElementById('picks');
 const searchBox = document.getElementById('pq');
 
-document.getElementById('head').innerHTML = siteHead('이야기하다 나온 것들', '모임 중에 자연스레 추천된 책과 영화');
 
 const activeKinds = new Set();
 let query = '';
@@ -36,16 +36,31 @@ function render() {
       const from = p.meetings
         ? `<a href="meeting.html?id=${encodeURIComponent(p.meeting_id)}">${esc(p.meetings.date)} ${esc(p.meetings.title)}</a>`
         : '<span></span>';
+      const vid = youtubeId(p.url);
+      const head = vid
+        ? `<a class="pick-thumb" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">
+             <img src="${esc(youtubeThumb(vid))}" alt="" loading="lazy"
+                  onerror="this.closest('.pick-thumb').remove()">
+             <span class="pick-play" aria-hidden="true"></span>
+           </a>`
+        : '';
+      const title = p.url && !vid
+        ? `<a class="pick-title" href="${esc(p.url)}" target="_blank" rel="noopener noreferrer">${esc(p.title)}</a>`
+        : `<h3 class="pick-title">${esc(p.title)}</h3>`;
+
       return `
-      <article class="pick">
-        <span class="pick-kind">${KIND_LABEL[p.kind] || '그 외'}</span>
-        <h3 class="pick-title">${esc(p.title)}</h3>
-        ${p.creator ? `<p class="pick-creator">${esc(p.creator)}</p>` : ''}
-        ${p.note ? `<p class="pick-note">${esc(p.note)}</p>` : ''}
-        <p class="pick-meta">
-          <span>${p.recommended_by ? `${esc(maskName(p.recommended_by))} 추천` : ''}</span>
-          ${from}
-        </p>
+      <article class="pick${vid ? ' has-thumb' : ''}">
+        ${head}
+        <div class="pick-body">
+          <span class="pick-kind">${KIND_LABEL[p.kind] || '그 외'}</span>
+          ${title}
+          ${p.creator ? `<p class="pick-creator">${esc(p.creator)}</p>` : ''}
+          ${p.note ? `<p class="pick-note">${esc(p.note)}</p>` : ''}
+          <p class="pick-meta">
+            <span>${p.recommended_by ? `${esc(maskName(p.recommended_by))} 추천` : ''}</span>
+            ${from}
+          </p>
+        </div>
       </article>`;
     })
     .join('');
@@ -104,6 +119,7 @@ async function openForm() {
               <select id="p-kind">
                 <option value="book">책</option>
                 <option value="movie">영화</option>
+                <option value="video">영상</option>
                 <option value="etc">그 외</option>
               </select>
             </label>
@@ -121,6 +137,11 @@ async function openForm() {
           <label class="field">
             <span>만든이 <em>없으면 비워두세요</em></span>
             <input type="text" id="p-creator" maxlength="80" placeholder="빔 벤더스">
+          </label>
+
+          <label class="field">
+            <span>링크 <em>유튜브 주소를 넣으면 썸네일이 붙어요</em></span>
+            <input type="url" id="p-url" maxlength="500" placeholder="https://youtu.be/...">
           </label>
 
           <label class="field">
@@ -159,6 +180,31 @@ async function openForm() {
     if (e.target === modal || e.target.classList.contains('note-close')) close();
   });
 
+  // 유튜브 주소를 넣으면 제목과 채널을 대신 채워준다.
+  const urlBox = document.getElementById('p-url');
+  const titleBox = document.getElementById('p-title');
+  const creatorBox = document.getElementById('p-creator');
+  const kindBox = document.getElementById('p-kind');
+
+  const fillFromYoutube = async () => {
+    const id = youtubeId(urlBox.value);
+    if (!id) return;
+
+    kindBox.value = 'video';
+    urlBox.classList.add('is-loading');
+    const info = await fetchYoutubeInfo(urlBox.value);
+    urlBox.classList.remove('is-loading');
+    if (!info) return;
+
+    // 이미 적어둔 내용은 건드리지 않는다
+    if (!titleBox.value.trim()) titleBox.value = info.title;
+    if (!creatorBox.value.trim()) creatorBox.value = info.creator;
+  };
+
+  urlBox.addEventListener('paste', () => setTimeout(fillFromYoutube, 0));
+  urlBox.addEventListener('change', fillFromYoutube);
+  urlBox.addEventListener('blur', fillFromYoutube);
+
   const msg = (text, kind = 'error') => {
     const el = document.getElementById('p-msg');
     el.hidden = false;
@@ -187,6 +233,7 @@ async function openForm() {
         title: title.trim(),
         creator: creator.trim(),
         note: note.trim(),
+        url: document.getElementById('p-url').value.trim() || null,
         recommended_by: by.trim(),
         meeting_id: document.getElementById('p-meeting').value || null,
       });
@@ -206,7 +253,7 @@ document.getElementById('add-pick').addEventListener('click', openForm);
 async function load() {
   skeletonCards(gridEl);
   try {
-    picks = await listPicks();
+    picks = await atLeast(listPicks());
   } catch (err) {
     showError(gridEl, '지금 추천 목록을 불러오지 못했어요.', load);
     return;
@@ -216,8 +263,9 @@ async function load() {
     return;
   }
   render();
+  restoreScroll();
 }
 
 load();
 setupInstall();
-mountNav();
+setupNav();
