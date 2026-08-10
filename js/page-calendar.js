@@ -22,13 +22,6 @@ function monthsWithMeetings() {
   return [...new Set(meetings.map((m) => String(m.date).slice(0, 7)))].sort().reverse();
 }
 
-/** 회차가 있는 해 + 올해를 합쳐 고를 수 있게 한다. */
-function yearOptions() {
-  const years = new Set(meetings.map((m) => Number(String(m.date).slice(0, 4))));
-  years.add(new Date().getFullYear());
-  return [...years].sort((a, b) => b - a);
-}
-
 function shift(delta) {
   const d = new Date(year, month - 1 + delta, 1);
   year = d.getFullYear();
@@ -78,19 +71,9 @@ function render() {
   root.innerHTML = `
     <div class="cal-bar">
       <button type="button" class="cal-nav" id="prev" aria-label="이전 달">‹</button>
-      <div class="cal-pickers">
-        <select id="pick-year" aria-label="연도">
-          ${yearOptions().map((y) => `<option value="${y}"${y === year ? ' selected' : ''}>${y}년</option>`).join('')}
-        </select>
-        <select id="pick-month" aria-label="월">
-          ${Array.from({ length: 12 }, (_, i) => i + 1)
-            .map((mm) => {
-              const has = marks.has(`${year}-${pad(mm)}`);
-              return `<option value="${mm}"${mm === month ? ' selected' : ''}>${mm}월${has ? ' ·' : ''}</option>`;
-            })
-            .join('')}
-        </select>
-      </div>
+      <button type="button" class="cal-label" id="open-picker" aria-haspopup="dialog">
+        ${year}년 ${month}월
+      </button>
       <button type="button" class="cal-nav" id="next" aria-label="다음 달">›</button>
     </div>
 
@@ -103,17 +86,64 @@ function render() {
 
   document.getElementById('prev').addEventListener('click', () => shift(-1));
   document.getElementById('next').addEventListener('click', () => shift(1));
-  document.getElementById('pick-year').addEventListener('change', (e) => {
-    year = Number(e.target.value);
-    render();
-  });
-  document.getElementById('pick-month').addEventListener('change', (e) => {
-    month = Number(e.target.value);
-    render();
-  });
+  document.getElementById('open-picker').addEventListener('click', () => openPicker(marks));
 
   rise(document.getElementById('grid'));
   setupSwipe();
+}
+
+/** 연·월 고르기. 네이티브 select 대신 직접 그린다. */
+function openPicker(marks) {
+  if (document.getElementById('cal-picker')) return;
+
+  let pickYear = year;
+
+  const paint = () => {
+    document.getElementById('picker-year').textContent = `${pickYear}년`;
+    document.querySelectorAll('#picker-months button').forEach((btn) => {
+      const mm = Number(btn.dataset.m);
+      btn.classList.toggle('is-on', pickYear === year && mm === month);
+      btn.classList.toggle('has-dot', marks.has(`${pickYear}-${pad(mm)}`));
+    });
+  };
+
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="picker-backdrop" id="cal-picker">
+      <div class="picker" role="dialog" aria-label="연월 고르기">
+        <div class="picker-head">
+          <button type="button" class="cal-nav" id="picker-prev" aria-label="이전 해">‹</button>
+          <strong id="picker-year"></strong>
+          <button type="button" class="cal-nav" id="picker-next" aria-label="다음 해">›</button>
+        </div>
+        <div class="picker-months" id="picker-months">
+          ${Array.from({ length: 12 }, (_, i) => i + 1)
+            .map((mm) => `<button type="button" data-m="${mm}">${mm}월</button>`)
+            .join('')}
+        </div>
+      </div>
+    </div>`);
+
+  const modal = document.getElementById('cal-picker');
+  const close = () => {
+    modal.remove();
+    document.removeEventListener('keydown', onKey);
+  };
+  function onKey(e) { if (e.key === 'Escape') close(); }
+  document.addEventListener('keydown', onKey);
+  modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+
+  document.getElementById('picker-prev').addEventListener('click', () => { pickYear--; paint(); });
+  document.getElementById('picker-next').addEventListener('click', () => { pickYear++; paint(); });
+  document.querySelectorAll('#picker-months button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      year = pickYear;
+      month = Number(btn.dataset.m);
+      close();
+      render();
+    });
+  });
+
+  paint();
 }
 
 /** 모바일에서 좌우로 밀어 달을 넘긴다. */
