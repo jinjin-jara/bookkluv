@@ -111,10 +111,12 @@ export function rise(el, stagger = false) {
 export function siteFooter() {
   return `
     <footer class="site-foot">
-      <p class="foot-made">만든 사람 · JinKyung Choi</p>
+      <p class="foot-made">
+        만든 사람 ·
+        <a href="https://github.com/jinjin-jara/bookkluv" target="_blank" rel="noopener noreferrer">JinKyung Choi</a>
+      </p>
       <p class="foot-links">
         <a href="https://www.instagram.com/bookk_luv/" target="_blank" rel="noopener noreferrer">북끄럽 인스타그램</a>
-        <a href="https://github.com/jinjin-jara/bookkluv" target="_blank" rel="noopener noreferrer">소스</a>
       </p>
     </footer>`;
 }

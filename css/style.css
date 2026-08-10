@@ -1147,6 +1147,8 @@ body.is-leaving .wrap {
   flex-wrap: wrap;
 }
 .foot-made { margin: 0; }
+.foot-made a { color: var(--ink-soft); text-decoration: none; }
+.foot-made a:hover { color: var(--accent); text-decoration: underline; }
 .foot-links { margin: 0; display: flex; gap: 14px; }
 .foot-links a { color: var(--ink-soft); text-decoration: none; }
 .foot-links a:hover { color: var(--accent); text-decoration: underline; }
