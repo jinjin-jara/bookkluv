@@ -1,6 +1,6 @@
 // 모임지 등록.
 
-import { createMeeting, addPicks } from './api.js';
+import { createMeeting } from './api.js';
 import { parseQuestions } from './parser.js';
 import { searchBooks } from './booksearch.js';
 import { siteHead, esc, mountNav } from './ui.js';
@@ -97,40 +97,6 @@ function renderPreview(warnings = []) {
   });
 }
 
-// ── 추천작 ───────────────────────────────
-function pickRowHTML() {
-  return `
-    <div class="pick-row">
-      <select class="pick-kind-input">
-        <option value="book">책</option>
-        <option value="movie">영화</option>
-        <option value="etc">그 외</option>
-      </select>
-      <input type="text" class="pick-title-input" placeholder="제목">
-      <input type="text" class="pick-creator-input" placeholder="만든이">
-      <input type="text" class="pick-note-input" placeholder="한 줄 메모">
-      <input type="text" class="pick-by-input" placeholder="추천한 사람" maxlength="20">
-    </div>`;
-}
-
-$('f-add-pick').addEventListener('click', () => {
-  $('f-picks').insertAdjacentHTML('beforeend', pickRowHTML());
-});
-$('f-picks').insertAdjacentHTML('beforeend', pickRowHTML());
-
-function collectPicks(meetingId) {
-  return [...document.querySelectorAll('.pick-row')]
-    .map((row) => ({
-      meeting_id: meetingId,
-      kind: row.querySelector('.pick-kind-input').value,
-      title: row.querySelector('.pick-title-input').value.trim(),
-      creator: row.querySelector('.pick-creator-input').value.trim(),
-      note: row.querySelector('.pick-note-input').value.trim(),
-      recommended_by: row.querySelector('.pick-by-input').value.trim() || null,
-    }))
-    .filter((p) => p.title);
-}
-
 // ── 등록 ─────────────────────────────────
 function message(text, kind = 'info') {
   const el = $('f-msg');
@@ -161,18 +127,6 @@ $('admin-form').addEventListener('submit', async (e) => {
       picked_by: $('f-picker').value.trim() || null,
       questions,
     });
-
-    const picks = collectPicks(saved.id);
-    if (picks.length) {
-      try {
-        await addPicks(picks);
-      } catch (err) {
-        // 모임지는 이미 저장됐다. 추천만 실패한 것은 알려주고 넘어간다.
-        message('모임지는 등록됐는데 추천작 저장에 실패했어요. 추천 페이지에서 다시 넣어주세요.', 'error');
-        setTimeout(() => { location.href = `meeting.html?id=${saved.id}`; }, 2500);
-        return;
-      }
-    }
 
     location.href = `meeting.html?id=${saved.id}`;
   } catch (err) {
