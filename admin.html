@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>모임지 등록 — 북끄럽</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="독서모임 북끄럽의 회차별 이야깃거리 아카이브">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f4f0e8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header id="head"></header>
+
+  <form class="form" id="admin-form">
+    <div class="field-row">
+      <label class="field">
+        <span>모임 날짜</span>
+        <input type="date" id="f-date" required>
+      </label>
+      <label class="field">
+        <span>고른 사람 <em>화면엔 홍*동으로 나와요</em></span>
+        <input type="text" id="f-picker" placeholder="홍길동" maxlength="20">
+      </label>
+    </div>
+
+    <label class="field">
+      <span>책 제목</span>
+      <span class="with-btn">
+        <input type="text" id="f-title" placeholder="책 제목을 적고 검색을 누르세요" required>
+        <button type="button" id="f-search">책 검색</button>
+      </span>
+    </label>
+
+    <div class="search-results" id="f-results" hidden></div>
+
+    <div class="field-row">
+      <label class="field">
+        <span>저자</span>
+        <input type="text" id="f-author" placeholder="목정원">
+      </label>
+      <label class="field">
+        <span>쪽수 <em>비워두면 기본 두께</em></span>
+        <input type="number" id="f-pages" placeholder="348" min="1" max="9999">
+      </label>
+    </div>
+
+    <label class="field">
+      <span>이야깃거리 <em>Q1. / 1) / Q. 같은 머리표를 알아서 찾아요</em></span>
+      <textarea id="f-raw" rows="10" placeholder="줄글을 그대로 붙여넣으세요"></textarea>
+    </label>
+
+    <div class="form-actions">
+      <button type="button" id="f-parse">질문 나누기</button>
+    </div>
+
+    <div id="f-preview"></div>
+
+    <fieldset class="picks-field">
+      <legend>이날 나온 추천작 <em>없으면 비워두세요</em></legend>
+      <div id="f-picks"></div>
+      <div class="form-actions">
+        <button type="button" id="f-add-pick">추천 한 줄 더</button>
+      </div>
+    </fieldset>
+
+    <div class="form-actions">
+      <button type="submit" class="primary" id="f-submit">모임지 등록</button>
+    </div>
+
+    <p class="form-msg" id="f-msg" hidden></p>
+  </form>
+</div>
+
+<script type="module" src="js/page-admin.js"></script>
+</body>
+</html>

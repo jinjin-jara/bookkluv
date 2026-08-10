@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+
+# 작업용 — 저장소에 올리지 않는다
+.claude/
+docs/
+reference/
+mockup.html

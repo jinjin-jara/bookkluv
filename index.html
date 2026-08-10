@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>북끄럽 — 독서모임 아카이브</title>
+<meta name="description" content="독서모임 북끄럽의 회차별 이야깃거리 아카이브">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="북끄럽">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="북끄럽 — 독서모임 아카이브">
+<meta property="og:description" content="모임마다 나눈 이야깃거리를 책장에 꽂아 둡니다.">
+<meta property="og:url" content="https://jinjin-jara.github.io/bookkluv/">
+<meta property="og:image" content="https://jinjin-jara.github.io/bookkluv/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="책이 꽂힌 책장 그림과 북끄럽 로고">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="북끄럽 — 독서모임 아카이브">
+<meta name="twitter:description" content="모임마다 나눈 이야깃거리를 책장에 꽂아 둡니다.">
+<meta name="twitter:image" content="https://jinjin-jara.github.io/bookkluv/assets/og.png">
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#f4f0e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="북끄럽">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header id="head"></header>
+
+  <div class="toolbar">
+    <input type="search" id="q" placeholder="책 제목 · 저자 검색" autocomplete="off">
+    <div class="chips" id="days"></div>
+  </div>
+  <nav class="years" id="years"></nav>
+  <p class="no-hit" id="nohit" hidden>찾는 책이 책장에 없어요.</p>
+  <div id="shelves"></div>
+</div>
+
+<script type="module" src="js/page-index.js"></script>
+</body>
+</html>
