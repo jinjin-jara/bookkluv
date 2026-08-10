@@ -38,26 +38,35 @@ export function siteHead(title = '북끄럽', subtitle = '독서모임 아카이
     </a>`;
 }
 
+// 선으로만 그린 아이콘. 굵기와 끝맺음을 맞춰 한 벌로 보이게 한다.
 const NAV = [
   {
     href: 'index.html',
     label: '책장',
-    icon: '<path d="M4 4h3v16H4zM9.5 4h3v16h-3zM15.2 4.4l2.9.8-4.2 15.4-2.9-.8z"/>',
+    icon: `<rect x="4" y="6" width="4" height="11" rx="0.8"/>
+           <rect x="10" y="4" width="4" height="13" rx="0.8"/>
+           <path d="M16.4 5.6l3.1.9-2.6 10.2-3.1-.9z"/>
+           <path d="M3 19.5h18"/>`,
   },
   {
     href: 'calendar.html',
     label: '달력',
-    icon: '<path d="M5 4h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5a1 1 0 011-1zm1 5v9h12V9zm2-7v3h2V2zm6 0v3h2V2z"/>',
+    icon: `<rect x="3.5" y="5.5" width="17" height="15" rx="2.2"/>
+           <path d="M3.5 10h17M8 3.5v4M16 3.5v4"/>
+           <circle cx="8.5" cy="14" r="1.1" fill="currentColor" stroke="none"/>
+           <circle cx="15.5" cy="17" r="1.1" fill="currentColor" stroke="none"/>`,
   },
   {
     href: 'picks.html',
     label: '추천',
-    icon: '<path d="M12 3.6l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.6-4.8 2.6.9-5.4-3.9-3.8 5.4-.8z"/>',
+    icon: `<path d="M6.5 3.5h11a1 1 0 011 1v15.2a.6.6 0 01-.93.5L12 16.6l-5.57 3.6a.6.6 0 01-.93-.5V4.5a1 1 0 011-1z"/>
+           <path d="M9.4 8.6l2.6 2.6 2.6-3.6"/>`,
   },
   {
     href: 'admin.html',
     label: '등록',
-    icon: '<path d="M11 5h2v14h-2z"/><path d="M5 11h14v2H5z"/>',
+    icon: `<path d="M4 20.2l.9-3.6L15.3 6.2a1.6 1.6 0 012.3 0l1.1 1.1a1.6 1.6 0 010 2.3L8.3 19.9z"/>
+           <path d="M14.2 7.4l2.9 2.9M4.9 16.6l2.9 2.9"/>`,
   },
 ];
 
@@ -69,7 +78,8 @@ export function bottomNav() {
       ${NAV.map(
         (item) => `
         <a href="${item.href}" class="tab${item.href === here ? ' is-on' : ''}">
-          <svg viewBox="0 0 24 24" aria-hidden="true">${item.icon}</svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${item.icon}</svg>
           <span>${item.label}</span>
         </a>`
       ).join('')}

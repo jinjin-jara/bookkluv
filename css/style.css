@@ -954,7 +954,12 @@ a { color: inherit; }
   border-radius: 10px;
   transition: color 0.14s ease, background 0.14s ease;
 }
-.tab svg { width: 21px; height: 21px; fill: currentColor; }
+.tab svg {
+  width: 22px;
+  height: 22px;
+  transition: transform 0.16s ease;
+}
+.tab.is-on svg { transform: translateY(-1px); }
 .tab:hover { color: var(--ink); }
 .tab.is-on { color: var(--accent); }
 
