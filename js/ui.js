@@ -103,8 +103,21 @@ export function rise(el, stagger = false) {
   el.classList.add(stagger ? 'stagger' : 'rise');
 }
 
-/** 페이지마다 한 번 부르면 탭바가 붙는다. */
+export function siteFooter() {
+  return `
+    <footer class="site-foot">
+      <p class="foot-made">만든 사람 · JinKyung Choi</p>
+      <p class="foot-links">
+        <a href="https://www.instagram.com/bookk_luv/" target="_blank" rel="noopener noreferrer">인스타그램</a>
+        <a href="https://github.com/jinjin-jara" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/jinjin-jara/bookkluv" target="_blank" rel="noopener noreferrer">소스</a>
+      </p>
+    </footer>`;
+}
+
+/** 페이지마다 한 번 부르면 푸터와 탭바가 붙는다. */
 export function mountNav() {
+  document.querySelector('.wrap')?.insertAdjacentHTML('beforeend', siteFooter());
   document.body.insertAdjacentHTML('beforeend', bottomNav());
   setupLinkFade();
 }
