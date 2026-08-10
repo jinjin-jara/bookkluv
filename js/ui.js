@@ -113,6 +113,7 @@ function setupLinkFade() {
 /** 방금 그린 내용이 아래에서 올라오게 한다. */
 export function rise(el, stagger = false) {
   if (!el) return;
+  el.classList.remove('has-state');
   el.classList.remove('rise', 'stagger');
   void el.offsetWidth;           // 다시 재생시키려면 한 번 끊어줘야 한다
   el.classList.add(stagger ? 'stagger' : 'rise');
@@ -139,6 +140,7 @@ export function mountNav() {
 }
 
 export function showError(el, message, retry) {
+  el.classList.add('has-state');
   el.innerHTML = `
     <div class="state">
       <img src="assets/mascot.png" alt="">
@@ -149,6 +151,7 @@ export function showError(el, message, retry) {
 }
 
 export function showEmpty(el, message) {
+  el.classList.add('has-state');
   el.innerHTML = `
     <div class="state">
       <img src="assets/mascot.png" alt="">
@@ -158,6 +161,7 @@ export function showEmpty(el, message) {
 
 /** 책장 모양 스켈레톤. 빈 화면 대신 들어갈 자리를 미리 보여준다. */
 export function skeletonShelf(el) {
+  el.classList.remove('has-state');
   const widths = [34, 52, 28, 61, 40, 47, 33, 56, 44, 30, 50, 38, 58, 42];
   const books = widths.map((w) => {
     const h = 130 + ((w * 7) % 60);
@@ -172,6 +176,7 @@ export function skeletonShelf(el) {
 
 /** 포스트잇 자리 */
 export function skeletonNotes(el) {
+  el.classList.remove('has-state');
   el.innerHTML = `
     <div class="sk sk-line" style="width:180px"></div>
     <div class="sk sk-head"></div>
@@ -182,9 +187,11 @@ export function skeletonNotes(el) {
 
 /** 추천 카드 자리 */
 export function skeletonCards(el) {
+  el.classList.remove('has-state');
   el.innerHTML = '<div class="sk sk-card"></div>'.repeat(6);
 }
 
 export function showLoading(el, message = '불러오는 중이에요') {
+  el.classList.add('has-state');
   el.innerHTML = `<div class="state is-loading"><p>${esc(message)}</p></div>`;
 }
