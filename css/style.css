@@ -73,6 +73,8 @@ body::before {
 
 body {
   margin: 0;
+  /* 두 번 톡 쳤을 때 화면이 확대되지 않게 한다. 손가락으로 벌리는 확대는 남긴다 */
+  touch-action: manipulation;
   word-break: keep-all;      /* 한글은 단어 단위로 끊는다 */
   overflow-wrap: break-word;
   background: var(--paper);
@@ -638,6 +640,8 @@ a.pick-title:hover { color: var(--accent); }
 }
 .q-body {
   margin: 0;
+  /* 두 번 톡 쳤을 때 화면이 확대되지 않게 한다. 손가락으로 벌리는 확대는 남긴다 */
+  touch-action: manipulation;
   font-size: 1.02rem;
   line-height: 1.9;
   white-space: pre-wrap;

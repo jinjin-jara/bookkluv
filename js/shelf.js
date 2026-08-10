@@ -81,6 +81,7 @@ export function spineColor(meeting, index = 0, total = 0) {
 export const SPINE_TEXT = {
   min: 9,       // px
   max: 22,
+  maxSmall: 14,   // 좁은 화면에서는 가장 큰 글자도 이보다 크지 않다
   wrapMax: 16,  // 두 줄로 접을 때 쓰는 글자 크기 상한
   wrapPad: 8,   // 두 줄일 때 좌우로 더 비워두는 폭
   padding: 34,  // 책등 위아래 여백. CSS의 .book/.spine-text 여백 합과 맞춘다
@@ -136,8 +137,10 @@ export function spineLayout(meeting, scale = 1) {
 
   const minFs = Math.max(7, Math.round(SPINE_TEXT.min * scale));
   // 폭에 비해 글자가 크면 좌우가 답답하다. 책등 폭에 상한을 건다.
+  // 좁은 화면에서는 가장 큰 글자를 한 번 더 낮춘다.
   const byWidth = Math.floor(width * SPINE_TEXT.widthRatio);
-  const maxFs = Math.max(minFs, Math.min(Math.round(SPINE_TEXT.max * scale), byWidth));
+  const cap = scale < 1 ? SPINE_TEXT.maxSmall : SPINE_TEXT.max;
+  const maxFs = Math.max(minFs, Math.min(cap, byWidth));
   const maxH = Math.round(SPINE.maxHeight * scale);
   const minH = Math.round(SPINE.minHeight * scale);
 
