@@ -87,9 +87,12 @@ export async function listPicks() {
   return data || [];
 }
 
-export async function addPicks(rows) {
-  if (!rows.length) return [];
-  const { data, error } = await supabase.from('picks').insert(rows).select('id');
+export async function addPick(pick) {
+  const { data, error } = await supabase
+    .from('picks')
+    .insert(pick)
+    .select('*, meetings(date, title)')
+    .single();
   if (error) throw error;
-  return data || [];
+  return data;
 }

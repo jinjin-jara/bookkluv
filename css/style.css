@@ -1297,3 +1297,62 @@ body.is-leaving .wrap {
   .cal-day { font-size: 0.64rem; }
   .cal-title { font-size: 1.25rem; }
 }
+
+/* ── 추천 남기기 버튼 ────────────────────── */
+.fab {
+  position: fixed;
+  right: 20px;
+  bottom: 92px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--shadow);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.fab svg { width: 18px; height: 18px; }
+.fab:hover { transform: translateY(-2px); box-shadow: 0 10px 26px var(--shadow); }
+
+@media (min-width: 700px) {
+  .fab { bottom: 96px; right: 28px; }
+}
+
+/* ── 추천 남기기 모달 ────────────────────── */
+.pick-modal { width: min(520px, 100%); }
+.pick-form-head {
+  position: relative;
+  padding: 26px 26px 4px;
+}
+.pick-form-head h2 { margin: 0 0 6px; font-size: 1.2rem; }
+.pick-form-head p {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+.pick-form { padding: 20px 26px 26px; gap: 16px; }
+.pick-form select {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  padding: 11px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--card);
+  color: var(--ink);
+  width: 100%;
+}
+.pick-form .form-actions button { width: 100%; }
+
+@media (max-width: 700px) {
+  .pick-form-head { padding: 20px 18px 4px; }
+  .pick-form { padding: 16px 18px 22px; }
+}
