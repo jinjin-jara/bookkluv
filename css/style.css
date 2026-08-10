@@ -1261,6 +1261,28 @@ body.is-leaving .wrap {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
+.cal-cell.is-empty {
+  position: relative;
+  transition: background 0.14s ease, border-color 0.14s ease;
+}
+.cal-add {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  color: var(--ink-soft);
+  opacity: 0;
+  transition: opacity 0.14s ease;
+}
+.cal-cell.is-empty:hover {
+  background: color-mix(in srgb, var(--accent) 7%, var(--card));
+  border-color: var(--accent);
+}
+.cal-cell.is-empty:hover .cal-add { opacity: 0.7; }
+
 .cal-sk { min-height: 84px; border-radius: 4px; }
 
 @media (max-width: 700px) {

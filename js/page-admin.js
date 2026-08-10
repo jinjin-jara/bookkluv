@@ -8,7 +8,11 @@ import { siteHead, esc, mountNav } from './ui.js';
 const $ = (id) => document.getElementById(id);
 document.getElementById('head').innerHTML = siteHead('모임지 등록', '줄글을 붙여넣으면 질문으로 나눠드려요');
 
-$('f-date').value = new Date().toISOString().slice(0, 10);
+// 달력에서 날짜를 눌러 왔으면 그 날짜로 채운다.
+const wanted = new URLSearchParams(location.search).get('date');
+$('f-date').value = /^\d{4}-\d{2}-\d{2}$/.test(wanted || '')
+  ? wanted
+  : new Date().toISOString().slice(0, 10);
 
 let questions = [];
 

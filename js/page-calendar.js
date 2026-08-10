@@ -41,7 +41,14 @@ function monthHTML(key, items) {
     if (weekday === 6) cls.push('is-sat');
 
     if (!m) {
-      cells.push(`<div class="${cls.join(' ')}"><span class="cal-day">${d}</span></div>`);
+      // 빈 날은 그 날짜로 모임지를 쓰러 가는 링크가 된다.
+      const iso = `${y}-${String(mm).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      cls.push('is-empty');
+      cells.push(`
+        <a class="${cls.join(' ')}" href="admin.html?date=${iso}" title="${iso}에 모임지 쓰기">
+          <span class="cal-day">${d}</span>
+          <span class="cal-add" aria-hidden="true">+</span>
+        </a>`);
       continue;
     }
 
