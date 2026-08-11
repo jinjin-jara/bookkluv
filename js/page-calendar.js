@@ -1,6 +1,7 @@
 // 모임 달력. 한 번에 한 달씩 본다.
 
 import { listMeetings } from './api.js';
+import { swr } from './cache.js';
 import { spineColor } from './shelf.js';
 import { esc, showError, setupNav, rise, atLeast } from './ui.js';
 import { setupInstall } from './install.js';
@@ -169,27 +170,36 @@ function skeleton() {
     <div class="cal-grid">${'<div class="sk cal-sk"></div>'.repeat(35)}</div>`;
 }
 
-async function load() {
-  skeleton();
-
-  try {
-    meetings = await atLeast(listMeetings());
-  } catch (err) {
-    showError(root, '지금 달력을 불러오지 못했어요.', load);
-    return;
-  }
-
-  // 책장과 같은 색을 쓰려면 같은 순서 번호가 필요하다.
+function apply(list) {
+  meetings = list;
   meetings.forEach((m, i) => { m._seq = i; });
   byDate = new Map(meetings.map((m) => [String(m.date), m]));
 
-  // 가장 최근 모임이 있는 달부터 보여준다. 기록이 없으면 이번 달.
-  const latest = meetings[0]?.date;
-  const start = latest ? new Date(latest + 'T00:00:00') : new Date();
-  year = start.getFullYear();
-  month = start.getMonth() + 1;
-
+  // 처음 그릴 때만 가장 최근 모임이 있는 달로 맞춘다
+  if (!year) {
+    const latest = meetings[0]?.date;
+    const start = latest ? new Date(latest + 'T00:00:00') : new Date();
+    year = start.getFullYear();
+    month = start.getMonth() + 1;
+  }
   render();
+}
+
+async function load() {
+  const { cached, fresh } = swr('meetings', listMeetings, apply);
+
+  if (cached && cached.length) {
+    apply(cached);
+  } else {
+    skeleton();
+  }
+
+  try {
+    const data = await fresh;
+    if (!cached || !cached.length) apply(data);
+  } catch (err) {
+    if (!cached) showError(root, '지금 달력을 불러오지 못했어요.', load);
+  }
 }
 
 load();

@@ -1,6 +1,7 @@
 // 모임 중에 나온 추천 도서·영화.
 
 import { listPicks, addPick, listMeetings } from './api.js';
+import { swr } from './cache.js';
 import { maskName } from './mask.js';
 import { youtubeId, youtubeThumb, fetchYoutubeInfo } from './picks-util.js';
 import { isClean } from './profanity.js';
@@ -251,19 +252,32 @@ async function openForm() {
 document.getElementById('add-pick').addEventListener('click', openForm);
 
 async function load() {
-  skeletonCards(gridEl);
+  const { cached, fresh } = swr('picks', listPicks, (data) => {
+    picks = data;
+    render();
+  });
+
+  if (cached && cached.length) {
+    picks = cached;
+    render();
+  } else {
+    skeletonCards(gridEl);
+  }
+
   try {
-    picks = await atLeast(listPicks());
+    const data = await fresh;
+    if (!cached || !cached.length) {
+      picks = data;
+      if (!picks.length) {
+        showEmpty(gridEl, '아직 쌓인 추천이 없어요. 아래 버튼으로 첫 추천을 남겨보세요.');
+        return;
+      }
+      render();
+    }
+    restoreScroll();
   } catch (err) {
-    showError(gridEl, '지금 추천 목록을 불러오지 못했어요.', load);
-    return;
+    if (!cached) showError(gridEl, '지금 추천 목록을 불러오지 못했어요.', load);
   }
-  if (!picks.length) {
-    showEmpty(gridEl, '아직 쌓인 추천이 없어요. 아래 버튼으로 첫 추천을 남겨보세요.');
-    return;
-  }
-  render();
-  restoreScroll();
 }
 
 load();

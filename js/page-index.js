@@ -1,6 +1,7 @@
 // 책장 목록 화면.
 
 import { listMeetings } from './api.js';
+import { swr } from './cache.js';
 import { spineColor, spineLayout, spineMarkup, groupByYear } from './shelf.js';
 import { esc, dayOf, DAY_NAMES, showError, showEmpty, setupNav, rise, restoreScroll, atLeast, skeletonShelf } from './ui.js';
 import { setupInstall } from './install.js';
@@ -122,22 +123,36 @@ window.addEventListener('resize', () => {
 });
 
 async function load() {
-  skeletonShelf(shelvesEl);
+  // 저장해 둔 목록이 있으면 기다리지 않고 바로 그린다.
+  const { cached, fresh } = swr('meetings', listMeetings, (data) => {
+    meetings = data;
+    renderDayChips();
+    renderShelves();
+  });
+
+  if (cached && cached.length) {
+    meetings = cached;
+    renderDayChips();
+    renderShelves();
+  } else {
+    skeletonShelf(shelvesEl);
+  }
+
   try {
-    meetings = await atLeast(listMeetings());
+    const data = await fresh;
+    if (!cached || !cached.length) {
+      meetings = data;
+      if (!meetings.length) {
+        showEmpty(shelvesEl, '아직 꽂힌 책이 없어요. 첫 모임지를 등록해보세요.');
+        return;
+      }
+      renderDayChips();
+      renderShelves();
+    }
+    restoreScroll();
   } catch (err) {
-    showError(shelvesEl, '지금 책장을 불러오지 못했어요.', load);
-    return;
+    if (!cached) showError(shelvesEl, '지금 책장을 불러오지 못했어요.', load);
   }
-
-  if (!meetings.length) {
-    showEmpty(shelvesEl, '아직 꽂힌 책이 없어요. 첫 모임지를 등록해보세요.');
-    return;
-  }
-
-  renderDayChips();
-  renderShelves();
-  restoreScroll();
 }
 
 load();

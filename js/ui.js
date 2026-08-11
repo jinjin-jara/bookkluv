@@ -43,7 +43,7 @@ function setupLinkFade() {
 
     e.preventDefault();
     document.body.classList.add('is-leaving');
-    setTimeout(() => { location.href = link.href; }, 130);
+    setTimeout(() => { location.href = link.href; }, 90);
   });
 }
 
@@ -138,19 +138,26 @@ export function showEmpty(el, message) {
     </div>`;
 }
 
-/** 책장 모양 스켈레톤. 빈 화면 대신 들어갈 자리를 미리 보여준다. */
+/**
+ * 책장 모양 자리 표시. 실제 책장과 같은 틀 안에 책등만 회색으로 세운다.
+ * 실물과 모양이 다르면 자리 표시가 사라질 때 화면이 크게 튄다.
+ */
 export function skeletonShelf(el) {
   el.classList.remove('has-state');
-  const widths = [34, 52, 28, 61, 40, 47, 33, 56, 44, 30, 50, 38, 58, 42];
-  const books = widths.map((w) => {
-    const h = 130 + ((w * 7) % 60);
-    return `<span class="sk-book" style="width:${w}px;height:${h}px"></span>`;
-  }).join('');
+  const sizes = [
+    [52, 196], [38, 158], [45, 212], [34, 168], [58, 184], [41, 150],
+    [48, 224], [36, 176], [54, 162], [40, 200], [33, 154], [50, 188],
+  ];
+  const books = sizes
+    .map(([w, h]) => `<span class="sk sk-book" style="width:${w}px;height:${h}px"></span>`)
+    .join('');
   el.innerHTML = `
-    <section class="year-block">
-      <div class="sk sk-title"></div>
-      <div class="bookcase">${books}</div>
-    </section>`;
+    <div class="bookcase">
+      <section class="shelf-year">
+        <span class="year-label sk-year"></span>
+        <div class="shelf-books">${books}</div>
+      </section>
+    </div>`;
 }
 
 /** 포스트잇 자리 */
