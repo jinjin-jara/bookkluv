@@ -340,7 +340,7 @@ a { color: inherit; }
 }
 
 .book .sp {
-  font-size: 0.42em;  /* 세로쓰기 공백. 글자 한 칸을 다 먹지 않게 줄이되 띄어쓰기는 보이게 */
+  font-size: 0.48em;  /* 세로쓰기 공백. 글자 한 칸을 다 먹지 않게 줄이되 띄어쓰기는 보이게 */
   letter-spacing: 0;
 }
 .book .tcy {
@@ -1211,7 +1211,7 @@ a.pick-title:hover { color: var(--accent); }
 
 /* View Transitions가 없는 브라우저와, 자바스크립트로 그린 내용용 */
 .rise {
-  animation: rise-in 0.42s cubic-bezier(0.2, 0.8, 0.25, 1) both;
+  animation: rise-in 0.24s ease both;
 }
 
 /* 본문만 살짝 밝아지며 들어온다. 헤더·푸터·탭바는 건드리지 않는다. */
@@ -1221,22 +1221,23 @@ a.pick-title:hover { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) {
   .wrap > * { animation: none !important; }
 }
+/* 글자를 밀어 올리면 읽던 눈이 따라간다. 밝기만 바꾼다. */
 @keyframes rise-in {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* 여러 개가 차례로 올라온다 */
-.stagger > * { animation: rise-in 0.44s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
-.stagger > *:nth-child(1) { animation-delay: 0.02s; }
-.stagger > *:nth-child(2) { animation-delay: 0.06s; }
-.stagger > *:nth-child(3) { animation-delay: 0.1s; }
-.stagger > *:nth-child(4) { animation-delay: 0.14s; }
-.stagger > *:nth-child(5) { animation-delay: 0.18s; }
-.stagger > *:nth-child(6) { animation-delay: 0.22s; }
-.stagger > *:nth-child(7) { animation-delay: 0.26s; }
-.stagger > *:nth-child(8) { animation-delay: 0.3s; }
-.stagger > *:nth-child(n + 9) { animation-delay: 0.34s; }
+.stagger > * { animation: rise-in 0.26s ease both; }
+.stagger > *:nth-child(1) { animation-delay: 0.01s; }
+.stagger > *:nth-child(2) { animation-delay: 0.03s; }
+.stagger > *:nth-child(3) { animation-delay: 0.05s; }
+.stagger > *:nth-child(4) { animation-delay: 0.07s; }
+.stagger > *:nth-child(5) { animation-delay: 0.09s; }
+.stagger > *:nth-child(6) { animation-delay: 0.11s; }
+.stagger > *:nth-child(7) { animation-delay: 0.13s; }
+.stagger > *:nth-child(8) { animation-delay: 0.15s; }
+.stagger > *:nth-child(n + 9) { animation-delay: 0.17s; }
 
 /* 움직임을 줄여달라고 한 사람에게는 애니메이션을 걷어낸다 */
 @media (prefers-reduced-motion: reduce) {
