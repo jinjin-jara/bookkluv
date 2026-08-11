@@ -1059,12 +1059,22 @@ a.pick-title:hover { color: var(--accent); }
   border-radius: 10px;
   transition: color 0.14s ease, background 0.14s ease;
 }
-.tab svg {
+.tab svg,
+.tab-mascot {
   width: 22px;
   height: 22px;
-  transition: transform 0.16s ease;
+  transition: transform 0.16s ease, opacity 0.16s ease;
 }
+/* 마스코트는 선 아이콘 옆에서 튀지 않게 옅게 두고, 눈높이도 맞춘다 */
+.tab-mascot {
+  object-fit: contain;
+  opacity: 0.42;
+  transform: translateY(3px);
+}
+.tab:hover .tab-mascot { opacity: 0.7; }
+.tab.is-on .tab-mascot { opacity: 1; }
 .tab.is-on svg { transform: translateY(-1px); }
+.tab.is-on .tab-mascot { transform: translateY(2px); }
 .tab:hover { color: var(--ink); }
 .tab.is-on { color: var(--accent); }
 
@@ -1320,7 +1330,7 @@ body.is-leaving .wrap > *:not(header):not(.site-foot) {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-bottom: 6px;
+  margin: -8px 0 4px;   /* 헤더 바로 아래 붙인다 */
 }
 .cal-nav {
   font-family: var(--sans);
@@ -1422,7 +1432,7 @@ body.is-leaving .wrap > *:not(header):not(.site-foot) {
   font-size: 0.78rem;
   color: var(--ink-soft);
   text-align: center;
-  margin: 0 0 20px;
+  margin: 0 0 14px;
 }
 
 .cal-grid {
@@ -1604,3 +1614,68 @@ input.is-loading {
   .pick-form-head { padding: 20px 18px 4px; }
   .pick-form { padding: 16px 18px 22px; }
 }
+
+/* ── 소개 ────────────────────────────────── */
+.about { max-width: 560px; }
+
+/* 사진 두 장을 한 줄에. 정사각으로 잘라 두었으니 키가 저절로 맞는다 */
+.about-photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  margin: 4px 0 30px;
+}
+.about-photos img {
+  width: 100%;
+  height: auto;            /* width/height 속성이 CSS를 이기지 않게 */
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.78) saturate(0.88);   /* 종이 바탕에 맞춰 톤을 낮춘다 */
+}
+.about-links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.about-link {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 17px 20px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-md);
+  background: var(--card);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease;
+}
+.about-link:hover {
+  border-color: var(--accent);
+  box-shadow: var(--lift);
+  transform: translateY(-2px);
+}
+.about-link.is-primary {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--paper);
+}
+.about-link.is-primary:hover { border-color: var(--ink); }
+.about-link-title {
+  font-family: var(--sans);
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+.about-link-sub {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  opacity: 0.65;
+}
+.about-made {
+  margin: 46px 0 0;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--ink-soft) 60%, transparent);
+}
+.about-made a { color: inherit; text-decoration: none; }
+.about-made a:hover { color: var(--accent); }

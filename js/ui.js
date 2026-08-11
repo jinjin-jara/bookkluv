@@ -109,19 +109,6 @@ export function rise(el, stagger = false) {
   el.classList.add(stagger ? 'stagger' : 'rise');
 }
 
-export function siteFooter() {
-  return `
-    <footer class="site-foot">
-      <p class="foot-made">
-        만든 사람 ·
-        <a href="https://github.com/jinjin-jara/bookkluv" target="_blank" rel="noopener noreferrer">JinKyung Choi</a>
-      </p>
-      <p class="foot-links">
-        <a href="https://www.instagram.com/bookk_luv/" target="_blank" rel="noopener noreferrer">북끄럽 인스타그램</a>
-      </p>
-    </footer>`;
-}
-
 /**
  * 헤더·탭바·푸터는 HTML에 직접 들어 있다. 자바스크립트로 그리면 문서가 뜬 뒤에야
  * 나타나서 깜빡인다. 여기서는 동작만 붙인다.

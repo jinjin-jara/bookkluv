@@ -27,6 +27,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="북끄럽">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap"></noscript>
@@ -39,7 +40,7 @@ body{margin:0;background:#faf8f3;color:#1c1a17}
 .sk,.sk-book{background:linear-gradient(100deg,#cfc7b8 20%,#e6e0d2 42%,#cfc7b8 62%);background-size:220% 100%;animation:sk-slide 1.25s ease-in-out infinite;border-radius:3px}
 @keyframes sk-slide{from{background-position:130% 0}to{background-position:-30% 0}}
 </style>
-<link rel="stylesheet" href="css/style.css?v=1786407756">
+<link rel="stylesheet" href="css/style.css?v=1786409058">
 </head>
 <body>
 <div class="wrap">
@@ -53,15 +54,6 @@ body{margin:0;background:#faf8f3;color:#1c1a17}
     </a>
   </header>
   <div id="meeting"><div class="sk sk-line" style="width:180px"></div><div class="sk sk-head"></div><div class="notes"><div class="sk sk-note"></div><div class="sk sk-note"></div><div class="sk sk-note"></div></div></div>
-  <footer class="site-foot">
-    <p class="foot-made">
-      만든 사람 ·
-      <a href="https://github.com/jinjin-jara/bookkluv" target="_blank" rel="noopener noreferrer">JinKyung Choi</a>
-    </p>
-    <p class="foot-links">
-      <a href="https://www.instagram.com/bookk_luv/" target="_blank" rel="noopener noreferrer">북끄럽 인스타그램</a>
-    </p>
-  </footer>
 </div>
 
 <nav class="tabbar" aria-label="주요 화면">
@@ -85,8 +77,12 @@ body{margin:0;background:#faf8f3;color:#1c1a17}
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.2l.9-3.6L15.3 6.2a1.6 1.6 0 012.3 0l1.1 1.1a1.6 1.6 0 010 2.3L8.3 19.9z"/><path d="M14.2 7.4l2.9 2.9M4.9 16.6l2.9 2.9"/></svg>
     <span>등록</span>
   </a>
+  <a href="about/" class="tab">
+    <img class="tab-mascot" src="assets/mascot-icon.png" alt="" aria-hidden="true">
+    <span>소개</span>
+  </a>
 </nav>
 
-<script type="module" src="js/page-meeting.js?v=1786407531"></script>
+<script type="module" src="js/page-meeting.js?v=1786409025"></script>
 </body>
 </html>

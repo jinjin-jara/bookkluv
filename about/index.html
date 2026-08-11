@@ -4,13 +4,28 @@
 <meta charset="utf-8">
 <base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>모임지 등록 — 북끄럽</title>
-<meta name="robots" content="noindex">
-<meta name="description" content="독서모임 북끄럽의 회차별 이야깃거리 아카이브">
+<title>북끄럽 소개</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="북끄럽">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="북끄럽 — 독서모임 아카이브">
+<meta property="og:description" content="격주로 만나 한 권씩 읽고 이야기합니다.">
+<meta property="og:url" content="https://jinjin-jara.github.io/bookkluv/about/">
+<meta property="og:image" content="https://jinjin-jara.github.io/bookkluv/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="책이 꽂힌 책장 그림과 북끄럽 로고">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="북끄럽 — 독서모임 아카이브">
+<meta name="twitter:description" content="격주로 만나 한 권씩 읽고 이야기합니다.">
+<meta name="twitter:image" content="https://jinjin-jara.github.io/bookkluv/assets/og.png">
+<meta name="description" content="독서모임 북끄럽 소개와 참여 안내">
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#f4f0e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="북끄럽">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,6 +33,13 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css"></noscript>
+<style>
+/* 첫 화면이 흰 채로 남지 않도록, 자리 표시에 필요한 최소 스타일만 문서에 둔다 */
+body{margin:0;background:#faf8f3;color:#1c1a17}
+.wrap{max-width:940px;margin:0 auto;padding:0 20px 96px}
+.sk,.sk-book{background:linear-gradient(100deg,#cfc7b8 20%,#e6e0d2 42%,#cfc7b8 62%);background-size:220% 100%;animation:sk-slide 1.25s ease-in-out infinite;border-radius:3px}
+@keyframes sk-slide{from{background-position:130% 0}to{background-position:-30% 0}}
+</style>
 <link rel="stylesheet" href="css/style.css?v=1786409058">
 </head>
 <body>
@@ -32,59 +54,28 @@
     </a>
   </header>
 
-  <div class="page-title">
-    <h2>모임지 등록</h2>
-    <p>줄글을 붙여넣으면 질문으로 나눠드려요</p>
-  </div>
-
-  <form class="form" id="admin-form">
-    <div class="field-row">
-      <label class="field">
-        <span>모임 날짜</span>
-        <input type="date" id="f-date" required>
-      </label>
-      <label class="field">
-        <span>선정자 <em>화면엔 홍*동으로 나와요</em></span>
-        <input type="text" id="f-picker" placeholder="홍길동" maxlength="20">
-      </label>
+  <section class="about">
+    <div class="about-photos">
+      <img src="assets/about-1.jpg" alt="북끄럽 모임 사진" width="760" height="760" loading="eager" decoding="async">
+      <img src="assets/about-2.jpg" alt="북끄럽 모임 사진" width="760" height="760" loading="eager" decoding="async">
     </div>
 
-    <label class="field">
-      <span>책 제목</span>
-      <span class="with-btn">
-        <input type="text" id="f-title" placeholder="책 제목을 적고 검색을 누르세요" required>
-        <button type="button" id="f-search">책 검색</button>
-      </span>
-    </label>
-
-    <div class="search-results" id="f-results" hidden></div>
-
-    <div class="field-row">
-      <label class="field">
-        <span>저자</span>
-        <input type="text" id="f-author" placeholder="목정원">
-      </label>
-      <label class="field">
-        <span>쪽수 <em>비워두면 기본 두께</em></span>
-        <input type="number" id="f-pages" placeholder="348" min="1" max="9999">
-      </label>
+    <div class="about-links">
+      <a class="about-link" href="https://www.instagram.com/bookk_luv/" target="_blank" rel="noopener noreferrer">
+        <span class="about-link-title">인스타그램</span>
+        <span class="about-link-sub">@bookk_luv · 모임 소식과 기록</span>
+      </a>
+      <a class="about-link is-primary" href="https://linktr.ee/bookk_luv" target="_blank" rel="noopener noreferrer">
+        <span class="about-link-title">모임 신청하기</span>
+        <span class="about-link-sub">참여 안내와 신청 링크</span>
+      </a>
     </div>
 
-
-    <label class="field">
-      <span>이야깃거리 <em>Q1. / 1) / Q. 같은 머리표를 알아서 찾아요</em></span>
-      <textarea id="f-raw" rows="9" placeholder="줄글을 그대로 붙여넣으면 질문 단위로 나눠드려요"></textarea>
-    </label>
-
-    <div id="f-preview"></div>
-
-
-    <div class="form-actions">
-      <button type="submit" class="primary" id="f-submit">모임지 등록</button>
-    </div>
-
-    <p class="form-msg" id="f-msg" hidden></p>
-  </form>
+    <p class="about-made">
+      만든 사람 ·
+      <a href="https://github.com/jinjin-jara/bookkluv" target="_blank" rel="noopener noreferrer">JinKyung Choi</a>
+    </p>
+  </section>
 </div>
 
 <nav class="tabbar" aria-label="주요 화면">
@@ -103,17 +94,17 @@
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h11a1 1 0 011 1v15.2a.6.6 0 01-.93.5L12 16.6l-5.57 3.6a.6.6 0 01-.93-.5V4.5a1 1 0 011-1z"/><path d="M9.4 8.6l2.6 2.6 2.6-3.6"/></svg>
     <span>추천</span>
   </a>
-  <a href="admin/" class="tab is-on" aria-current="page">
+  <a href="admin/" class="tab">
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.2l.9-3.6L15.3 6.2a1.6 1.6 0 012.3 0l1.1 1.1a1.6 1.6 0 010 2.3L8.3 19.9z"/><path d="M14.2 7.4l2.9 2.9M4.9 16.6l2.9 2.9"/></svg>
     <span>등록</span>
   </a>
-  <a href="about/" class="tab">
+  <a href="about/" class="tab is-on" aria-current="page">
     <img class="tab-mascot" src="assets/mascot-icon.png" alt="" aria-hidden="true">
     <span>소개</span>
   </a>
 </nav>
 
-<script type="module" src="js/page-admin.js?v=1786409025"></script>
+<script type="module" src="js/page-about.js?v=1786409025"></script>
 </body>
 </html>

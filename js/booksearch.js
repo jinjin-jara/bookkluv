@@ -9,6 +9,15 @@ import { NL_KEY } from './config.js';
 const SEOJI = 'https://seoji.nl.go.kr/landingPage/SearchApi.do';
 const GOOGLE = 'https://www.googleapis.com/books/v1/volumes';
 
+/** "지은이: 최찬혁", "글: A ;그림: B" 같은 표기에서 이름만 추린다. */
+function parseAuthor(text) {
+  return String(text || '')
+    .split(/[;·]/)
+    .map((part) => part.replace(/^[^:]*:\s*/, '').trim())
+    .filter(Boolean)
+    .join(', ');
+}
+
 /** "352 p." / "352p" / "1책(352 p.)" 같은 표기에서 숫자만 뽑는다. */
 function parsePages(text) {
   const m = String(text || '').match(/(\d{2,4})\s*(?:p|쪽|페이지)/i);
@@ -28,7 +37,7 @@ async function searchSeoji(query) {
 
   return (json.docs || []).map((d) => ({
     title: (d.TITLE || '').trim(),
-    author: (d.AUTHOR || '').trim(),
+    author: parseAuthor(d.AUTHOR),
     pages: parsePages(d.PAGE),
     publisher: (d.PUBLISHER || '').trim(),
     cover: (d.TITLE_URL || '').trim() || null,
@@ -60,16 +69,29 @@ async function searchGoogle(query) {
  * @returns {Promise<Array<{title, author, pages, publisher, cover, source}>>}
  * @throws 두 곳 모두 실패했을 때만
  */
+/** 제목을 비교하기 좋게 다듬는다. */
+const flat = (t) => String(t || '').toLowerCase().replace(/[\s(),.·:'"]/g, '');
+
 export async function searchBooks(query) {
   const q = (query || '').trim();
   if (!q) return [];
 
-  try {
-    const found = await searchSeoji(q);
-    if (found.length) return found;
-  } catch (err) {
-    // 국립중앙도서관이 막히면 구글로 넘어간다
-  }
+  // 국립중앙도서관은 국내서 서지가 정확하지만 쪽수가 자주 비어 있다.
+  // 구글은 반대로 쪽수를 가진 경우가 많다. 둘을 같이 물어보고 채워 넣는다.
+  const [seoji, google] = await Promise.all([
+    searchSeoji(q).catch(() => []),
+    searchGoogle(q).catch(() => []),
+  ]);
 
-  return searchGoogle(q);
+  if (!seoji.length) return google;
+
+  return seoji.map((book) => {
+    if (book.pages) return book;
+    const key = flat(book.title);
+    const hit = google.find((g) => {
+      const gk = flat(g.title);
+      return g.pages && (gk === key || gk.startsWith(key) || key.startsWith(gk));
+    });
+    return hit ? { ...book, pages: hit.pages } : book;
+  });
 }
