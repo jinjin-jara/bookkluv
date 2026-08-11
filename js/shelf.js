@@ -79,7 +79,7 @@ export function spineColor(meeting, index = 0, total = 0) {
 }
 
 export const SPINE_TEXT = {
-  min: 9,       // px
+  min: 10.5,    // px. 가장 작은 글자도 읽히도록 바닥을 올린다
   max: 22,
   maxSmall: 14,   // 좁은 화면에서는 가장 큰 글자도 이보다 크지 않다
   wrapMax: 16,  // 두 줄로 접을 때 쓰는 글자 크기 상한
@@ -137,7 +137,7 @@ export function spineLayout(meeting, scale = 1) {
   const width = Math.max(20, Math.round(spineWidth(meeting && meeting.pages) * scale));
   const base = spineHeight(title);
 
-  const minFs = Math.max(7, Math.round(SPINE_TEXT.min * scale));
+  const minFs = Math.max(8.5, Math.round(SPINE_TEXT.min * scale * 2) / 2);
   // 폭에 비해 글자가 크면 좌우가 답답하다. 책등 폭에 상한을 건다.
   // 좁은 화면에서는 가장 큰 글자를 한 번 더 낮춘다.
   const byWidth = Math.floor(width * SPINE_TEXT.widthRatio);
@@ -158,7 +158,7 @@ export function spineLayout(meeting, scale = 1) {
   const preferWrap = chars > SPINE_TEXT.oneLineMax;
 
   // 한 줄로 담기는 가장 큰 글자를 찾되, 필요하면 책을 키운다.
-  for (let fs = preferWrap ? -1 : maxFs; fs >= minFs; fs--) {
+  for (let fs = preferWrap ? -1 : maxFs; fs >= minFs; fs -= 0.5) {
     const need = Math.ceil(chars * fs * SPINE_TEXT.perChar) + SPINE_TEXT.padding;
     if (need <= maxH && colsFit(fs) >= 1) {
       const height = Math.min(maxH, Math.max(minH, Math.round(base * scale), need));
@@ -168,7 +168,7 @@ export function spineLayout(meeting, scale = 1) {
 
   // 두 줄로 접어 본다. 폭이 좁으면 열이 안 들어가므로 확인이 필요하다.
   const height = maxH;
-  for (let fs = SPINE_TEXT.wrapMax; fs >= minFs; fs--) {
+  for (let fs = SPINE_TEXT.wrapMax; fs >= minFs; fs -= 0.5) {
     const cols = Math.ceil((chars * fs * SPINE_TEXT.perChar) / (height - SPINE_TEXT.padding));
     // 접기로 정한 제목이 한 열로 떨어지면 글자만 작아진다. 두 열 이상일 때만 쓴다.
     if (preferWrap && cols < 2) continue;
@@ -177,7 +177,7 @@ export function spineLayout(meeting, scale = 1) {
   }
 
   // 얇은 책은 두 줄도 못 넣는다. 한 줄로 되돌리고 글자를 줄인다.
-  for (let fs = SPINE_TEXT.wrapMax; fs >= minFs; fs--) {
+  for (let fs = SPINE_TEXT.wrapMax; fs >= minFs; fs -= 0.5) {
     if (colsFit(fs) >= 1) return { width, height, fontSize: fs };
   }
   return { width, height, fontSize: minFs };
