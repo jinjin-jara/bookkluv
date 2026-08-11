@@ -933,11 +933,20 @@ a.pick-title:hover { color: var(--accent); }
 }
 .with-btn button:hover { background: var(--ink); color: var(--paper); }
 
+/* 결과는 아래 칸을 밀어내지 않고 그 위에 얹힌다 */
+.field.is-search { position: relative; }
 .search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  margin-top: 6px;
   display: flex;
   flex-direction: column;
   border: 1px solid var(--rule);
   border-radius: var(--r-sm);
+  box-shadow: var(--lift-lg);
   overflow-y: auto;
   max-height: 260px;   /* 네다섯 칸쯤 보이고 나머지는 굴려서 본다 */
   overscroll-behavior: contain;

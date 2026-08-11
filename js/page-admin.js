@@ -32,10 +32,12 @@ function mark(title, query) {
   );
 }
 
+let lastResults = [];   // 다시 열어 볼 수 있게 들고 있는다
+
 async function runSearch() {
   const box = $('f-results');
   const query = $('f-title').value.trim();
-  if (!query) { box.hidden = true; return; }
+  if (!query) { box.hidden = true; lastResults = []; return; }
 
   box.hidden = false;
   box.innerHTML = '<p class="result-msg">찾는 중이에요…</p>';
@@ -49,9 +51,12 @@ async function runSearch() {
   }
 
   if (!results.length) {
+    lastResults = [];
     box.innerHTML = '<p class="result-msg">찾은 책이 없어요. 직접 적어주세요.</p>';
     return;
   }
+
+  lastResults = results;
 
   box.innerHTML = results
     .map(
@@ -75,6 +80,18 @@ async function runSearch() {
 }
 
 $('f-search').addEventListener('click', runSearch);
+
+// 골라서 닫은 목록을 다시 보고 싶을 때가 있다. 제목 칸을 누르면 다시 편다.
+$('f-title').addEventListener('focus', () => {
+  const box = $('f-results');
+  if (lastResults.length && box.innerHTML) box.hidden = false;
+});
+
+// 목록 바깥을 누르면 접는다
+document.addEventListener('click', (e) => {
+  if (e.target.closest('#f-results') || e.target.closest('#f-title') || e.target.closest('#f-search')) return;
+  $('f-results').hidden = true;
+});
 
 // 제목을 치다 멈추면 알아서 찾는다. 글자마다 부르지 않게 잠깐 기다린다.
 const titleBox = $('f-title');
