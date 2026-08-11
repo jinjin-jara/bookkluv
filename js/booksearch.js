@@ -10,22 +10,24 @@ const SEOJI = 'https://seoji.nl.go.kr/landingPage/SearchApi.do';
 const GOOGLE = 'https://www.googleapis.com/books/v1/volumes';
 
 /**
- * 도서관 저자 표기에서 이름만 추린다.
- * "지은이: 최찬혁", "글: A ;그림: B", "장익수 지음" 처럼 앞뒤에 역할이 붙어 온다.
+ * 도서관 저자 표기를 다듬는다.
+ *
+ * "장익수 지음", "지은이: 최찬혁"처럼 한 사람만 적힌 경우에만 역할 표기를 뗀다.
+ * 여러 사람이 섞인 표기는 누가 무엇을 했는지가 정보라서 원문 그대로 둔다.
  */
 const ROLE_TAIL = /\s*(지음|엮음|옮김|글|그림|사진|편저|저|역|편|공저|감수|번역)\s*$/;
 
 function parseAuthor(text) {
-  return String(text || '')
-    .split(/[;,·]/)
-    .map((part) =>
-      part
-        .replace(/^[^:]*:\s*/, '')   // "지은이: " 처럼 앞에 붙은 역할
-        .replace(ROLE_TAIL, '')      // "장익수 지음" 처럼 뒤에 붙은 역할
-        .trim()
-    )
-    .filter(Boolean)
-    .join(', ');
+  const raw = String(text || '').trim();
+  if (!raw) return '';
+
+  // 구분자가 있으면 여러 사람이다. 손대지 않는다.
+  if (/[;,·]/.test(raw)) return raw;
+
+  return raw
+    .replace(/^[^:]*:\s*/, '')   // 앞에 붙은 역할: "지은이: "
+    .replace(ROLE_TAIL, '')      // 뒤에 붙은 역할: " 지음"
+    .trim();
 }
 
 /** "352 p." / "352p" / "1책(352 p.)" 같은 표기에서 숫자만 뽑는다. */
