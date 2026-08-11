@@ -130,7 +130,9 @@ export function spineFontSize(title, boxHeight, boxWidth, scale = 1) {
  */
 export function spineLayout(meeting, scale = 1) {
   const title = (meeting && meeting.title) || '';
-  const chars = title.replace(/\s/g, '').length || 1;
+  // 띄어쓰기도 자리를 조금 차지한다. CSS에서 정한 공백 폭과 같은 비율로 센다.
+  const spaces = (title.match(/\s/g) || []).length;
+  const chars = (title.replace(/\s/g, '').length || 1) + spaces * 0.42;
 
   const width = Math.max(20, Math.round(spineWidth(meeting && meeting.pages) * scale));
   const base = spineHeight(title);

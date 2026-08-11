@@ -340,7 +340,7 @@ a { color: inherit; }
 }
 
 .book .sp {
-  font-size: 0.3em;   /* 세로 공백 폭 줄이기 */
+  font-size: 0.42em;  /* 세로쓰기 공백. 글자 한 칸을 다 먹지 않게 줄이되 띄어쓰기는 보이게 */
   letter-spacing: 0;
 }
 .book .tcy {
