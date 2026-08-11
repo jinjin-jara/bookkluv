@@ -154,33 +154,36 @@ export function spineLayout(meeting, scale = 1) {
   const colsFitWrapped = (fs) =>
     Math.floor((inner - SPINE_TEXT.wrapPad) / (fs * SPINE_TEXT.colGap));
 
-  // 아주 긴 제목은 책만 커지고 글자는 잘아진다. 그럴 바에는 두 줄로 접는다.
-  const preferWrap = chars > SPINE_TEXT.oneLineMax;
-
-  // 한 줄로 담기는 가장 큰 글자를 찾되, 필요하면 책을 키운다.
-  for (let fs = preferWrap ? -1 : maxFs; fs >= minFs; fs -= 0.5) {
+  // 한 줄과 두 줄 가운데 글자가 더 커지는 쪽을 고른다.
+  // 한 줄을 고집하면 칸 높이에 막혀 글자만 잘아지고, 두 줄을 고집하면
+  // 짧은 제목이 쓸데없이 접힌다.
+  let single = null;
+  for (let fs = maxFs; fs >= minFs; fs -= 0.5) {
     const need = Math.ceil(chars * fs * SPINE_TEXT.perChar) + SPINE_TEXT.padding;
     if (need <= maxH && colsFit(fs) >= 1) {
-      const height = Math.min(maxH, Math.max(minH, Math.round(base * scale), need));
-      return { width, height, fontSize: fs };
+      single = { fs, height: Math.min(maxH, Math.max(minH, Math.round(base * scale), need)) };
+      break;
     }
   }
 
-  // 두 줄로 접어 본다. 폭이 좁으면 열이 안 들어가므로 확인이 필요하다.
-  const height = maxH;
-  for (let fs = SPINE_TEXT.wrapMax; fs >= minFs; fs -= 0.5) {
-    const cols = Math.ceil((chars * fs * SPINE_TEXT.perChar) / (height - SPINE_TEXT.padding));
-    // 접기로 정한 제목이 한 열로 떨어지면 글자만 작아진다. 두 열 이상일 때만 쓴다.
-    if (preferWrap && cols < 2) continue;
-    const fits = cols >= 2 ? colsFitWrapped(fs) >= cols : colsFit(fs) >= cols;
-    if (fits) return { width, height, fontSize: fs };
+  let wrapped = null;
+  for (let fs = Math.min(maxFs, SPINE_TEXT.wrapMax); fs >= minFs; fs -= 0.5) {
+    const cols = Math.ceil((chars * fs * SPINE_TEXT.perChar) / (maxH - SPINE_TEXT.padding));
+    if (cols < 2) continue;                       // 두 줄일 때만 따진다
+    if (colsFitWrapped(fs) >= cols) {
+      wrapped = { fs, height: maxH };
+      break;
+    }
   }
 
-  // 얇은 책은 두 줄도 못 넣는다. 한 줄로 되돌리고 글자를 줄인다.
-  for (let fs = SPINE_TEXT.wrapMax; fs >= minFs; fs -= 0.5) {
-    if (colsFit(fs) >= 1) return { width, height, fontSize: fs };
+  // 한 줄이 확실히 크면 한 줄, 두 줄이 눈에 띄게 크면 두 줄
+  if (single && (!wrapped || single.fs >= wrapped.fs - 0.5)) {
+    return { width, height: single.height, fontSize: single.fs };
   }
-  return { width, height, fontSize: minFs };
+  if (wrapped) return { width, height: wrapped.height, fontSize: wrapped.fs };
+
+  // 둘 다 안 되면 가장 작은 글자로 한 줄
+  return { width, height: maxH, fontSize: minFs };
 }
 
 /**
