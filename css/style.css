@@ -1075,13 +1075,13 @@ a.pick-title:hover { color: var(--accent); }
   height: 22px;
   transition: transform 0.16s ease, opacity 0.16s ease;
 }
-/* 마스코트는 선 아이콘 옆에서 튀지 않게 옅게 두고, 눈높이도 맞춘다 */
+/* 마스코트는 선 아이콘과 눈높이만 맞춘다. 흐리게 두면 혼자 꺼진 것처럼 보인다 */
 .tab-mascot {
   object-fit: contain;
-  opacity: 0.42;
+  opacity: 0.85;
   transform: translateY(3px);
 }
-.tab:hover .tab-mascot { opacity: 0.7; }
+.tab:hover .tab-mascot { opacity: 1; }
 .tab.is-on .tab-mascot { opacity: 1; }
 .tab.is-on svg { transform: translateY(-1px); }
 .tab.is-on .tab-mascot { transform: translateY(2px); }
