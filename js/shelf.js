@@ -200,7 +200,11 @@ export function spineMarkup(title) {
   );
 }
 
-/** 회차 목록을 연도별로 묶는다. 최신 연도가 먼저, 연도 안에서도 최신이 먼저. */
+/**
+ * 회차를 연도별로 묶는다.
+ * 최신 해가 위, 한 해 안에서도 최근 회차가 왼쪽이다.
+ * 새로 등록한 모임지가 늘 눈에 먼저 들어온다.
+ */
 export function groupByYear(meetings) {
   const map = new Map();
   for (const m of meetings) {
