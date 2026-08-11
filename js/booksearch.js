@@ -9,11 +9,21 @@ import { NL_KEY } from './config.js';
 const SEOJI = 'https://seoji.nl.go.kr/landingPage/SearchApi.do';
 const GOOGLE = 'https://www.googleapis.com/books/v1/volumes';
 
-/** "지은이: 최찬혁", "글: A ;그림: B" 같은 표기에서 이름만 추린다. */
+/**
+ * 도서관 저자 표기에서 이름만 추린다.
+ * "지은이: 최찬혁", "글: A ;그림: B", "장익수 지음" 처럼 앞뒤에 역할이 붙어 온다.
+ */
+const ROLE_TAIL = /\s*(지음|엮음|옮김|글|그림|사진|편저|저|역|편|공저|감수|번역)\s*$/;
+
 function parseAuthor(text) {
   return String(text || '')
-    .split(/[;·]/)
-    .map((part) => part.replace(/^[^:]*:\s*/, '').trim())
+    .split(/[;,·]/)
+    .map((part) =>
+      part
+        .replace(/^[^:]*:\s*/, '')   // "지은이: " 처럼 앞에 붙은 역할
+        .replace(ROLE_TAIL, '')      // "장익수 지음" 처럼 뒤에 붙은 역할
+        .trim()
+    )
     .filter(Boolean)
     .join(', ');
 }
