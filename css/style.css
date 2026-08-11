@@ -1068,8 +1068,8 @@ a.pick-title:hover { color: var(--accent); }
 .tab:hover { color: var(--ink); }
 .tab.is-on { color: var(--accent); }
 
-/* 탭바에 가리지 않게 아래를 비워둔다 */
-.wrap { padding-bottom: 96px; }
+/* 탭바에 가리지 않게 아래를 비워둔다. 홈 인디케이터가 있는 기기까지 고려한다 */
+.wrap { padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
 
 @media (min-width: 700px) {
   .tabbar {
