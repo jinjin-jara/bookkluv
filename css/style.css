@@ -1689,3 +1689,13 @@ input.is-loading {
 }
 .about-made a { color: inherit; text-decoration: none; }
 .about-made a:hover { color: var(--accent); }
+
+/* 사파리는 글자가 16px보다 작은 입력칸에 초점이 가면 화면을 확대해 버린다.
+   손가락으로 쓰는 기기에서만 16px로 올려 그 동작을 막는다. */
+@media (pointer: coarse) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
