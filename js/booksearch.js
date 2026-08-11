@@ -70,7 +70,38 @@ async function searchGoogle(query) {
  * @throws 두 곳 모두 실패했을 때만
  */
 /** 제목을 비교하기 좋게 다듬는다. */
-const flat = (t) => String(t || '').toLowerCase().replace(/[\s(),.·:'"]/g, '');
+const flat = (t) => String(t || '').toLowerCase().replace(/[\s(),.·:'"\[\]]/g, '');
+
+/**
+ * 찾는 제목과 얼마나 가까운지 점수를 매긴다. 높을수록 위로 올린다.
+ *
+ * 도서관 검색은 "파친코"를 넣으면 《파친코와 정동의 미디어》 같은 책도 같이 준다.
+ * 사람이 찾는 건 대개 제목이 그대로거나 거의 같은 책이다.
+ */
+function score(book, query) {
+  const q = flat(query);
+  const t = flat(book.title);
+  if (!t) return -1;
+
+  let s = 0;
+  if (t === q) s += 100;                       // 제목이 똑같다
+  else if (t.startsWith(q)) s += 60;           // 제목이 찾는 말로 시작한다
+  else if (t.includes(q)) s += 25;             // 어딘가에 들어 있다
+  else return -1;                              // 아니면 후보에서 뺀다
+
+  // 군더더기가 적을수록 위로. "파친코" < "파친코와 정동의 미디어"
+  s -= Math.min(30, Math.max(0, t.length - q.length) * 1.5);
+
+  // 정보가 갖춰진 쪽이 쓸모 있다
+  if (book.pages) s += 12;
+  if (book.author) s += 6;
+  if (book.publisher) s += 3;
+
+  // 낱권 표시가 붙은 것은 살짝 뒤로 (파친코 2)
+  if (/\d+$/.test(book.title.trim())) s -= 8;
+
+  return s;
+}
 
 export async function searchBooks(query) {
   const q = (query || '').trim();
@@ -83,9 +114,9 @@ export async function searchBooks(query) {
     searchGoogle(q).catch(() => []),
   ]);
 
-  if (!seoji.length) return google;
+  if (!seoji.length) return rank(google, q);
 
-  return seoji.map((book) => {
+  const merged = seoji.map((book) => {
     if (book.pages) return book;
     const key = flat(book.title);
     const hit = google.find((g) => {
@@ -94,4 +125,20 @@ export async function searchBooks(query) {
     });
     return hit ? { ...book, pages: hit.pages } : book;
   });
+
+  // 도서관 결과에 없던 책이 구글에만 있을 수 있다. 제목이 똑같은 것만 더한다.
+  const seen = new Set(merged.map((b) => flat(b.title)));
+  const extra = google.filter((g) => flat(g.title) === flat(q) && !seen.has(flat(g.title)));
+
+  return rank([...merged, ...extra], q);
+}
+
+/** 관련도가 높은 것부터. 너무 동떨어진 것은 버린다. */
+function rank(list, query) {
+  return list
+    .map((book) => ({ book, s: score(book, query) }))
+    .filter((x) => x.s >= 0)
+    .sort((a, b) => b.s - a.s)
+    .slice(0, 8)
+    .map((x) => x.book);
 }

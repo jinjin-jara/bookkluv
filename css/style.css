@@ -938,15 +938,25 @@ a.pick-title:hover { color: var(--accent); }
   flex-direction: column;
   border: 1px solid var(--rule);
   border-radius: var(--r-sm);
-  overflow: hidden;
+  overflow-y: auto;
+  max-height: 260px;   /* 네다섯 칸쯤 보이고 나머지는 굴려서 본다 */
+  overscroll-behavior: contain;
+}
+.search-results mark {
+  background: color-mix(in srgb, #f5c518 55%, transparent);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 1px;
 }
 .search-results .result {
   display: flex;
-  gap: 12px;
-  align-items: center;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+  text-align: left;
   text-align: left;
   font-family: inherit;
-  padding: 12px 14px;
+  padding: 10px 13px;
   background: var(--card);
   border: none;
   border-bottom: 1px solid var(--rule);
@@ -964,8 +974,8 @@ a.pick-title:hover { color: var(--accent); }
   background: var(--rule);
 }
 .result-text { display: flex; flex-direction: column; gap: 3px; }
-.search-results .result b { font-size: 0.92rem; font-weight: 600; }
-.search-results .result .result-text span { font-size: 0.76rem; color: var(--ink-soft); }
+.search-results .result b { font-size: 0.85rem; font-weight: 600; line-height: 1.45; }
+.search-results .result span { font-size: 0.72rem; color: var(--ink-soft); }
 
 .form-actions { display: flex; gap: 9px; }
 .form-actions button {

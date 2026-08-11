@@ -16,10 +16,26 @@ $('f-date').value = /^\d{4}-\d{2}-\d{2}$/.test(wanted || '')
 let questions = [];
 
 // ── 책 검색 ──────────────────────────────
-$('f-search').addEventListener('click', async () => {
+/** 제목에서 찾는 말과 겹치는 자리에 표시를 씌운다. */
+function mark(title, query) {
+  const t = String(title || '');
+  const q = String(query || '').trim();
+  if (!q) return esc(t);
+
+  const i = t.toLowerCase().indexOf(q.toLowerCase());
+  if (i < 0) return esc(t);
+
+  return (
+    esc(t.slice(0, i)) +
+    `<mark>${esc(t.slice(i, i + q.length))}</mark>` +
+    esc(t.slice(i + q.length))
+  );
+}
+
+async function runSearch() {
   const box = $('f-results');
   const query = $('f-title').value.trim();
-  if (!query) return;
+  if (!query) { box.hidden = true; return; }
 
   box.hidden = false;
   box.innerHTML = '<p class="result-msg">찾는 중이에요…</p>';
@@ -41,7 +57,7 @@ $('f-search').addEventListener('click', async () => {
     .map(
       (b, i) => `
     <button type="button" class="result" data-i="${i}">
-      <b>${esc(b.title)}</b>
+      <b>${mark(b.title, query)}</b>
       <span>${esc(b.author || '저자 미상')}${b.pages ? ` · ${b.pages}쪽` : ' · 쪽수 정보 없음'}${b.publisher ? ` · ${esc(b.publisher)}` : ''}</span>
     </button>`
     )
@@ -56,7 +72,29 @@ $('f-search').addEventListener('click', async () => {
       box.hidden = true;
     });
   });
-});
+}
+
+$('f-search').addEventListener('click', runSearch);
+
+// 제목을 치다 멈추면 알아서 찾는다. 글자마다 부르지 않게 잠깐 기다린다.
+const titleBox = $('f-title');
+let titleComposing = false;
+let searchTimer = null;
+let lastQuery = '';
+
+function scheduleSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    const q = titleBox.value.trim();
+    if (!q || q === lastQuery) return;
+    lastQuery = q;
+    runSearch();
+  }, 450);
+}
+
+titleBox.addEventListener('compositionstart', () => { titleComposing = true; });
+titleBox.addEventListener('compositionend', () => { titleComposing = false; scheduleSearch(); });
+titleBox.addEventListener('input', () => { if (!titleComposing) scheduleSearch(); });
 
 // ── 질문 나누기 ──────────────────────────
 // 붙여넣거나 고치는 즉시 나눈다. 한글 조합 중에는 기다린다.
