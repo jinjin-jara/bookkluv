@@ -76,8 +76,21 @@ function setupScrollMemory() {
   }, true);
 }
 
-/** 목록을 다 그린 뒤에 부른다. 저장해 둔 위치가 있으면 그리로 간다. */
+/**
+ * 목록을 다 그린 뒤에 부른다.
+ *
+ * 뒤로 가기로 돌아왔을 때만 보던 자리로 되돌린다. 탭을 눌러 새 화면으로
+ * 옮겼을 때까지 자리를 물려주면, 엉뚱하게 중간부터 보여서 어리둥절해진다.
+ */
 export function restoreScroll() {
+  const nav = performance.getEntriesByType('navigation')[0];
+  const wentBack = nav && nav.type === 'back_forward';
+
+  if (!wentBack) {
+    window.scrollTo(0, 0);
+    return;
+  }
+
   try {
     const all = JSON.parse(sessionStorage.getItem(SCROLL_KEY) || '{}');
     const y = all[location.pathname + location.search];
@@ -116,6 +129,10 @@ export function siteFooter() {
 export function setupNav() {
   setupLinkFade();
   setupScrollMemory();
+
+  // 새 화면은 늘 맨 위에서 시작한다. 뒤로 가기는 restoreScroll이 따로 챙긴다.
+  const nav = performance.getEntriesByType('navigation')[0];
+  if (!nav || nav.type !== 'back_forward') window.scrollTo(0, 0);
 }
 
 export function showError(el, message, retry) {
