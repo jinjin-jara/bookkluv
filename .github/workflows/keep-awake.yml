@@ -1,0 +1,26 @@
+name: Supabase 깨우기
+
+# 무료 요금제는 이레 동안 요청이 없으면 프로젝트를 재운다.
+# 사흘에 한 번 가벼운 조회를 보내 깨어 있게 한다.
+on:
+  schedule:
+    - cron: '17 3 */3 * *'   # 사흘마다 03:17 UTC
+  workflow_dispatch:          # 손으로도 돌릴 수 있게
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 회차 하나만 읽어 본다
+        run: |
+          code=$(curl -s -o /tmp/out.txt -w '%{http_code}' \
+            -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/meetings?select=id&limit=1")
+
+          echo "HTTP $code"
+          head -c 200 /tmp/out.txt
+
+          if [ "$code" != "200" ]; then
+            echo "::error::Supabase가 응답하지 않는다 (HTTP $code)"
+            exit 1
+          fi
