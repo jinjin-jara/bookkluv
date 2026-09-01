@@ -1,19 +1,23 @@
-// 모임지 등록.
+// 모임지 등록과 수정. 주소에 id가 있으면 그 회차를 고친다.
 
-import { createMeeting } from './api.js';
+import { createMeeting, updateMeeting, getMeeting } from './api.js';
 import { parseQuestions } from './parser.js';
 import { searchBooks } from './booksearch.js';
 import { esc, setupNav } from './ui.js';
 
 const $ = (id) => document.getElementById(id);
 
+const params = new URLSearchParams(location.search);
+const editId = params.get('id');          // 있으면 수정, 없으면 새로 등록
+
 // 달력에서 날짜를 눌러 왔으면 그 날짜로 채운다.
-const wanted = new URLSearchParams(location.search).get('date');
+const wanted = params.get('date');
 $('f-date').value = /^\d{4}-\d{2}-\d{2}$/.test(wanted || '')
   ? wanted
   : new Date().toISOString().slice(0, 10);
 
 let questions = [];
+let originalQuestions = [];   // 질문 순서가 바뀌었는지 견주어 본다
 
 // ── 책 검색 ──────────────────────────────
 /** 제목에서 찾는 말과 겹치는 자리에 표시를 씌운다. */
@@ -234,6 +238,21 @@ function message(text, kind = 'info') {
   el.className = `form-msg is-${kind}`;
 }
 
+/**
+ * 댓글은 질문 자리(q:0, q:1…)에 붙어 있다.
+ * 질문을 지우거나 순서를 바꾸면 남이 쓴 이야기가 엉뚱한 질문에 붙는다.
+ * 내용만 고치는 것은 안전하므로, 자리가 어긋날 때만 묻는다.
+ */
+function seatsMoved() {
+  if (!editId || !originalQuestions.length) return false;
+  if (questions.length !== originalQuestions.length) return true;
+  // 내용이 크게 달라진 자리가 있으면 순서가 바뀐 것으로 본다
+  return questions.some((q, i) => {
+    const before = originalQuestions[i] || '';
+    return q.slice(0, 12) !== before.slice(0, 12);
+  });
+}
+
 $('admin-form').addEventListener('submit', async (e) => {
   e.preventDefault();
 
@@ -241,27 +260,83 @@ $('admin-form').addEventListener('submit', async (e) => {
     return message('이야깃거리를 붙여넣어주세요.', 'error');
   }
 
+  if (seatsMoved()) {
+    const ok = confirm(
+      '질문의 개수나 순서가 달라졌어요.\n' +
+      '이미 달린 이야기는 질문 자리에 붙어 있어서, 자리가 밀리면 다른 질문에 붙습니다.\n' +
+      '그래도 저장할까요?'
+    );
+    if (!ok) return;
+  }
+
   const submit = $('f-submit');
   submit.disabled = true;
-  message('등록하는 중이에요…');
+  message(editId ? '고치는 중이에요…' : '등록하는 중이에요…');
 
   const pages = Number($('f-pages').value);
+  const meeting = {
+    date: $('f-date').value,
+    title: $('f-title').value.trim(),
+    author: $('f-author').value.trim(),
+    pages: Number.isFinite(pages) && pages > 0 ? pages : null,
+    picked_by: $('f-picker').value.trim() || null,
+    questions,
+  };
 
   try {
-    const saved = await createMeeting({
-      date: $('f-date').value,
-      title: $('f-title').value.trim(),
-      author: $('f-author').value.trim(),
-      pages: Number.isFinite(pages) && pages > 0 ? pages : null,
-      picked_by: $('f-picker').value.trim() || null,
-      questions,
-    });
-
-    location.href = `meeting/?id=${saved.id}`;
+    if (editId) {
+      await updateMeeting(editId, meeting);
+      location.href = `meeting/?id=${editId}`;
+    } else {
+      const saved = await createMeeting(meeting);
+      location.href = `meeting/?id=${saved.id}`;
+    }
   } catch (err) {
-    message('등록하지 못했어요. 잠시 뒤 다시 시도해주세요.', 'error');
+    message(editId ? '고치지 못했어요. 잠시 뒤 다시 시도해주세요.' : '등록하지 못했어요. 잠시 뒤 다시 시도해주세요.', 'error');
     submit.disabled = false;
   }
 });
+
+/** 수정하러 왔으면 기존 내용을 담아 둔다. */
+async function loadForEdit() {
+  if (!editId) return;
+
+  document.title = '모임지 고치기 — 북끄럽';
+  const heading = document.querySelector('.page-title h2');
+  const lead = document.querySelector('.page-title p');
+  if (heading) heading.textContent = '모임지 고치기';
+  if (lead) lead.textContent = '불러오는 중이에요…';
+  $('f-submit').textContent = '고친 내용 저장';
+
+  let meeting = null;
+  try {
+    meeting = await getMeeting(editId);
+  } catch (err) {
+    message('모임지를 불러오지 못했어요. 새로고침해 주세요.', 'error');
+    return;
+  }
+
+  if (!meeting) {
+    message('그런 모임지가 없어요.', 'error');
+    return;
+  }
+
+  $('f-date').value = meeting.date || '';
+  $('f-title').value = meeting.title || '';
+  $('f-author').value = meeting.author || '';
+  $('f-pages').value = meeting.pages || '';
+  $('f-picker').value = meeting.picked_by || '';
+
+  originalQuestions = [...(meeting.questions || [])];
+  questions = [...originalQuestions];
+  // 다시 나누지 않고 그대로 보여준다. 붙여넣은 줄글이 아니라 이미 나뉜 질문이다.
+  raw.value = questions.map((q, i) => `Q${i + 1}. ${q}`).join('\n\n');
+  lastQuery = meeting.title || '';   // 들어오자마자 책 검색이 뜨지 않게
+  renderPreview();
+
+  if (lead) lead.textContent = '고칠 곳만 손보고 저장하세요';
+}
+
+loadForEdit();
 
 setupNav();

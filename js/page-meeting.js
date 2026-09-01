@@ -31,7 +31,10 @@ function renderMeeting() {
       </div>
     </div>
     <div class="notes" id="notes"></div>
-    <a class="back-link" href="./">← 책장으로</a>`;
+    <div class="meeting-foot">
+      <a class="back-link" href="./">← 책장으로</a>
+      <a class="edit-link" href="admin/?id=${encodeURIComponent(meeting.id)}">고치기</a>
+    </div>`;
 
   rise(root);
   renderNotes();

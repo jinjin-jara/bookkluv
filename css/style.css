@@ -1707,3 +1707,23 @@ input.is-loading {
 }
 .about-made a { color: inherit; text-decoration: none; }
 .about-made a:hover { color: var(--accent); }
+
+/* ── 모임지 아래 줄 ──────────────────────── */
+.meeting-foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 10px;
+}
+.edit-link {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: var(--r-pill);
+  transition: border-color 0.14s ease, color 0.14s ease;
+}
+.edit-link:hover { border-color: var(--accent); color: var(--accent); }
