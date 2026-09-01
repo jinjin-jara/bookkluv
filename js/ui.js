@@ -113,7 +113,23 @@ export function rise(el, stagger = false) {
  * 헤더·탭바·푸터는 HTML에 직접 들어 있다. 자바스크립트로 그리면 문서가 뜬 뒤에야
  * 나타나서 깜빡인다. 여기서는 동작만 붙인다.
  */
+const DEV = ['localhost', '127.0.0.1'].includes(location.hostname);
+
+/** 지금 화면이 어떤 판을 돌리고 있는지 콘솔에서 바로 확인할 수 있게 한다. */
+export const BUILD = '1788233571';
+
 export function setupNav() {
+  // 로컬에서는 예전에 등록된 서비스워커가 낡은 파일을 물고 있을 수 있다.
+  // 모든 화면이 이 함수를 지나가므로 여기서 지운다.
+  if (DEV && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then((rs) => rs.forEach((r) => r.unregister()))
+      .catch(() => {});
+    caches.keys().then((ks) => ks.forEach((k) => caches.delete(k))).catch(() => {});
+  }
+
+  if (DEV) console.info('[북끄럽] build', BUILD);
+
   setupLinkFade();
   setupScrollMemory();
 

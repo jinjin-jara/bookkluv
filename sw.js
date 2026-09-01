@@ -28,6 +28,19 @@ const SHELL = [
   './manifest.webmanifest',
 ];
 
+// 로컬에서는 워커가 스스로 물러난다. 예전에 등록된 워커가 낡은 파일을 물고 있으면
+// 고친 코드가 화면에 닿지 않아 원인을 찾기가 몹시 어려워진다.
+if (DEV) {
+  self.addEventListener('install', () => self.skipWaiting());
+  self.addEventListener('activate', async () => {
+    await self.registration.unregister();
+    const keys = await caches.keys();
+    await Promise.all(keys.map((k) => caches.delete(k)));
+    const clients = await self.clients.matchAll({ type: 'window' });
+    clients.forEach((c) => c.navigate(c.url));
+  });
+}
+
 self.addEventListener('install', (e) => {
   if (DEV) return self.skipWaiting();
   e.waitUntil(

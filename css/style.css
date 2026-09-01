@@ -58,6 +58,13 @@
 
 * { box-sizing: border-box; }
 
+/*
+ * hidden은 늘 이긴다.
+ * display를 지정한 요소에 hidden을 걸면 브라우저 기본 display:none이 밀려서
+ * 숨겼는데도 화면에 그대로 남는다. 이 한 줄이 없어서 검색 목록이 닫히지 않았다.
+ */
+[hidden] { display: none !important; }
+
 /* 종이 질감: 아주 옅은 잡티를 화면 전체에 깐다. 글자 읽기를 방해하지 않을 만큼만. */
 body::before {
   content: '';
@@ -878,13 +885,15 @@ a.pick-title:hover { color: var(--accent); }
 .field-row { display: flex; gap: 14px; }
 .field-row .field { flex: 1 1 0; min-width: 0; }
 .field { display: flex; flex-direction: column; gap: 7px; }
-.field > span {
+.field > span,
+.field > label {
   font-size: 0.78rem;
   font-weight: 600;
   color: var(--ink-soft);
   letter-spacing: 0.02em;
 }
-.field > span em {
+.field > span em,
+.field > label em {
   font-style: normal;
   font-weight: 400;
   opacity: 0.75;
