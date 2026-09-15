@@ -16,13 +16,15 @@ jobs:
         run: |
           # curl이 죽어도 스크립트가 여기서 끝나지 않게 한다.
           # 프로젝트가 잠들면 호스트 이름부터 사라져(exit 6) 아무 말 없이 끝나 버린다.
+          : > /tmp/out.txt   # curl이 죽으면 파일이 없어 head가 투덜댄다
+
           code=$(curl -s --max-time 20 --retry 2 --retry-delay 5 \
             -o /tmp/out.txt -w '%{http_code}' \
             -H "apikey: ${{ secrets.SUPABASE_KEY }}" \
             "${{ secrets.SUPABASE_URL }}/rest/v1/meetings?select=id&limit=1") || curl_exit=$?
 
           echo "HTTP ${code:-none} (curl ${curl_exit:-0})"
-          head -c 200 /tmp/out.txt || true
+          head -c 200 /tmp/out.txt
 
           if [ "${curl_exit:-0}" = "6" ]; then
             echo "::error::호스트를 찾지 못했다. Supabase가 이미 잠들었을 가능성이 크다."
