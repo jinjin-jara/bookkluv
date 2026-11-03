@@ -18,6 +18,40 @@ export function formatShort(iso) {
   return `${d.getMonth() + 1}월 ${d.getDate()}일`;
 }
 
+/**
+ * 도서관 서지 원문을 보기 좋게 고친다. 원본 데이터는 건드리지 않는다.
+ * '지은이: 존 윌리엄스 ;옮긴이: 김승욱' → '존 윌리엄스 · 옮김 김승욱'
+ */
+const ROLE_LABEL = { 옮긴이: '옮김', 역자: '옮김', 번역: '옮김', 그림: '그림', 그린이: '그림', 엮은이: '엮음', 편저: '엮음', 감수: '감수' };
+const ROLE_AUTHOR = new Set(['지은이', '저자', '글', '지음', '저']);
+
+export function formatAuthor(raw) {
+  const text = String(raw ?? '').trim();
+  if (!text) return '';
+
+  const names = (s) => s.split(/\s*,\s*/).filter(Boolean).join(', ');
+  const SUFFIX = /^(.+?)\s+(지음|지은이|저|글|옮김|옮긴이|역|번역|그림|그린이|엮음|엮은이|편저|감수)\s*$/;
+
+  const parts = text.split(/\s*[;；]\s*/).filter(Boolean).map((seg) => {
+    // '지은이: 이름' 꼴
+    const pre = seg.match(/^\s*([^:：]+?)\s*[:：]\s*(.+?)\s*$/);
+    if (pre) {
+      const [, role, who] = pre;
+      return ROLE_AUTHOR.has(role) ? names(who) : `${ROLE_LABEL[role] || role} ${names(who)}`;
+    }
+    // '이름 지음' · '이름 옮김' 꼴
+    const post = seg.match(SUFFIX);
+    if (post) {
+      const [, who, role] = post;
+      if (ROLE_AUTHOR.has(role)) return names(who);
+      const label = ROLE_LABEL[role] || ({ 옮김: '옮김', 역: '옮김', 번역: '옮김', 엮음: '엮음', 편저: '엮음', 그림: '그림', 감수: '감수' })[role] || role;
+      return `${label} ${names(who)}`;
+    }
+    return names(seg);
+  });
+  return parts.join(' · ');
+}
+
 /** 사용자가 넣은 값은 전부 이걸 통과시킨다. */
 export function esc(text) {
   return String(text ?? '')

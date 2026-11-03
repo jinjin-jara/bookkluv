@@ -4,7 +4,7 @@
 // 캐시는 오프라인이거나 네트워크가 죽었을 때만 꺼내 쓴다.
 // (캐시를 먼저 보면 배포해도 옛 화면이 계속 뜬다.)
 
-const CACHE = 'bookkluv-v4';
+const CACHE = 'bookkluv-v5';
 const FONT_CACHE = 'bookkluv-fonts-v1';
 
 // 로컬에서 작업할 때는 캐시가 수정을 가려버린다. 아예 끈다.

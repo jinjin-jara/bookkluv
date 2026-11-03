@@ -20,7 +20,7 @@
   --r-md: 12px;     /* 카드, 모달 */
   --r-pill: 999px;  /* 칩, 버튼 */
 
-  --control-h: 38px;            /* 칩·입력칸 높이를 맞춘다 */
+  --control-h: 44px;            /* 칩·입력칸 높이를 맞춘다 */
   --gap-x: 8px;
   --gap-y: 10px;
   --sec: 46px;                  /* 구획 사이 간격 */
@@ -146,20 +146,56 @@ a { color: inherit; }
   font-family: var(--sans);
   margin-bottom: var(--gap-y);
 }
+.search {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  margin: 0;
+}
 .toolbar input[type='search'] {
   font-family: inherit;
   font-size: 0.9rem;
   height: var(--control-h);
-  padding: 0 16px;
+  width: 100%;
+  padding: 0 44px 0 40px;
   border: 1px solid var(--rule);
   border-radius: var(--r-pill);
   background: var(--card);
   color: var(--ink);
-  min-width: 220px;
-  flex: 1;
   transition: border-color 0.14s ease;
+  -webkit-appearance: none;
+  appearance: none;
 }
-.toolbar input[type='search']::placeholder { color: color-mix(in srgb, var(--ink-soft) 70%, transparent); }
+/* 브라우저 기본 지우기 버튼은 우리 버튼과 겹친다 */
+.toolbar input[type='search']::-webkit-search-cancel-button { display: none; }
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  color: var(--ink-soft);
+  pointer-events: none;
+}
+.search-clear {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-radius: 50%;
+}
+.search-clear svg { width: 16px; height: 16px; }
+.search-clear:hover { color: var(--accent); }
+.toolbar input[type='search']::placeholder { color: var(--ink-soft); opacity: 0.8; }
 .toolbar input[type='search']:hover { border-color: color-mix(in srgb, var(--ink-soft) 45%, var(--rule)); }
 
 .chips { display: flex; gap: var(--gap-x); flex-wrap: wrap; }
@@ -167,6 +203,7 @@ a { color: inherit; }
   font-family: var(--sans);
   font-size: 0.82rem;
   height: var(--control-h);
+  min-height: 44px;
   padding: 0 16px;
   border: 1px solid var(--rule);
   border-radius: var(--r-pill);
@@ -186,6 +223,13 @@ a { color: inherit; }
   color: var(--ink-soft);
   text-align: center;
   padding: 50px 0;
+}
+.no-hit p { margin: 0 0 14px; }
+.search-status {
+  font-family: var(--sans);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  margin: 4px 2px 12px;
 }
 
 /* ── 연도 바로가기 ───────────────────────── */
@@ -497,9 +541,9 @@ a.pick-title:hover { color: var(--accent); }
 .note-num {
   font-family: var(--sans);
   font-weight: 800;
-  font-size: 0.7rem;
+  font-size: 0.74rem;
   letter-spacing: 0.12em;
-  opacity: 0.45;
+  opacity: 0.62;
   margin-bottom: 10px;
 }
 .note-text {
@@ -514,11 +558,14 @@ a.pick-title:hover { color: var(--accent); }
 .note-count {
   position: absolute;
   left: 17px;
-  bottom: 15px;
+  bottom: 13px;
   font-family: var(--sans);
-  font-size: 0.7rem;
-  opacity: 0.6;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #4a4234;
 }
+/* 아직 이야기가 없으면 질문보다 한 걸음 물러난 안내만 */
+.note-count.is-none { font-weight: 400; color: #5f5646; }
 .note.overall { --pad: #f0ebe0; }
 
 /* ── 질문 모달 ───────────────────────────── */
@@ -539,7 +586,9 @@ a.pick-title:hover { color: var(--accent); }
   border-radius: var(--r-md);
   width: min(620px, 100%);
   max-height: 86vh;
+  max-height: 86dvh;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 0;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   animation: pop 0.2s cubic-bezier(0.2, 0.9, 0.3, 1);
@@ -547,8 +596,11 @@ a.pick-title:hover { color: var(--accent); }
 .note-modal-head {
   position: sticky;
   top: 0;
+  z-index: 2;
+  max-height: 40vh;
+  overflow-y: auto;
   background: var(--pad, #f6e08c);
-  padding: 24px 28px 22px;
+  padding: 24px 56px 22px 28px;
   color: #3a3220;
 }
 .note-modal-num {
@@ -568,16 +620,20 @@ a.pick-title:hover { color: var(--accent); }
 }
 .note-close {
   position: absolute;
-  top: 14px;
-  right: 16px;
+  top: 6px;
+  right: 6px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
   background: none;
   border: none;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
   color: inherit;
-  opacity: 0.5;
-  padding: 4px;
+  opacity: 0.7;
+  border-radius: 50%;
 }
 .note-close:hover { opacity: 1; }
 .note-modal-body { padding: 22px 28px 26px; }
@@ -656,114 +712,117 @@ a.pick-title:hover { color: var(--accent); }
 
 /* ── 댓글: 책 여백에 적은 메모 ───────────── */
 .comments {
-  margin: 0 0 0 34px;
-  padding: 18px 0 0 22px;
-  border-left: 1px dashed var(--rule);
-}
-.comments-label {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  color: var(--ink-soft);
-  margin: 0 0 10px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .comment {
-  padding: 7px 0;
+  padding: 11px 14px 12px;
+  background: color-mix(in srgb, var(--rule) 32%, var(--card));
+  border: 1px solid var(--rule);
+  border-radius: 4px 14px 14px 14px;
   font-family: var(--serif);
   font-size: 0.95rem;
-  line-height: 1.75;
-  color: var(--ink-soft);
-  position: relative;
+  line-height: 1.7;
+  color: var(--ink);
 }
-.comment::before {
-  content: '';
-  position: absolute;
-  left: -23px;
-  top: 17px;
-  width: 9px;
-  height: 1px;
-  background: var(--rule);
+.comment-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-bottom: 4px;
+  font-family: var(--sans);
 }
 .comment .who {
-  font-family: var(--sans);
   font-weight: 700;
-  font-size: 0.74rem;
+  font-size: 0.8rem;
   color: var(--accent);
-  margin-right: 9px;
-  vertical-align: 2px;
 }
 .comment .when {
-  font-family: var(--sans);
-  font-size: 0.68rem;
+  font-size: 0.74rem;
   color: var(--ink-soft);
-  margin-left: 9px;
-  vertical-align: 2px;
+}
+.comment .body {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .comment-tools {
-  margin-left: 10px;
+  margin-left: auto;
   display: inline-flex;
-  gap: 6px;
-  opacity: 0;
-  transition: opacity 0.15s ease;
+  gap: 2px;
 }
-.comment:hover .comment-tools { opacity: 1; }
 .comment-tools button {
   font-family: var(--sans);
-  font-size: 0.68rem;
+  font-size: 0.76rem;
   color: var(--ink-soft);
   background: none;
   border: none;
-  border-bottom: 1px solid var(--rule);
-  padding: 0 1px 1px;
+  min-height: 44px;
+  min-width: 44px;
+  margin: -12px 0;
+  padding: 0 8px;
   cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--rule);
+  text-underline-offset: 3px;
 }
 .comment-tools button:hover { color: var(--accent); border-color: var(--accent); }
 
-@media (hover: none) {
-  .comment-tools { opacity: 1; }
-}
-
 .comment-form {
-  display: flex;
-  gap: 7px;
-  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  grid-template-areas: 'nick body submit' 'status status status';
+  gap: 8px;
+  align-items: start;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
   font-family: var(--sans);
 }
+.comment-form label { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.comment-form label > span { font-size: 0.74rem; font-weight: 600; color: var(--ink-soft); }
+.cf-nick { grid-area: nick; }
+.cf-body { grid-area: body; }
 .comment-form input,
 .comment-form textarea {
   font-family: inherit;
-  font-size: 0.86rem;
-  padding: 9px 11px;
+  font-size: 1rem;     /* 16px 미만이면 iOS가 확대한다 */
+  padding: 10px 12px;
   border: 1px solid var(--rule);
   border-radius: var(--r-sm);
   background: transparent;
   color: var(--ink);
+  width: 100%;
+  min-height: 44px;
 }
-.comment-form input { width: 104px; flex: 0 0 auto; }
-.comment-form textarea { flex: 1; resize: vertical; min-height: 38px; }
+.comment-form textarea { resize: vertical; min-height: 88px; }
 .comment-form input:focus,
-.comment-form textarea:focus { outline: none; border-color: var(--accent); background: var(--card); }
-.comment-form button {
+.comment-form textarea:focus { border-color: var(--accent); background: var(--card); }
+.cf-submit {
+  grid-area: submit;
+  align-self: end;
   font-family: inherit;
-  font-size: 0.82rem;
-  padding: 0 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-height: 44px;
+  padding: 0 20px;
   border: 1px solid var(--ink);
   border-radius: var(--r-sm);
-  background: transparent;
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
   cursor: pointer;
 }
-.comment-form button:hover { background: var(--ink); color: var(--paper); }
+.cf-submit:hover { opacity: 0.9; }
+.cf-submit:disabled { opacity: 0.55; cursor: progress; }
 .comment-form.has-error textarea,
 .comment-form.has-error input { border-color: var(--accent); }
-.comment-form.has-error::after {
-  content: '남기기 어려운 표현이 있어요';
-  font-size: 0.76rem;
-  color: var(--accent);
-  align-self: center;
-  white-space: nowrap;
-}
+.cf-status { grid-area: status; margin: 0; min-height: 1.2em; font-size: 0.82rem; color: var(--ink-soft); }
+.cf-status.is-error { color: var(--accent); }
+.cf-status.is-ok { color: #2f6b3c; }
 
 .next-up {
   margin-top: 70px;
@@ -797,10 +856,14 @@ a.pick-title:hover { color: var(--accent); }
   .notes { grid-template-columns: 1fr; gap: 14px; }
   .note { padding: 18px 16px 36px; min-height: 0; }
   .note-text { -webkit-line-clamp: 20; font-size: 0.92rem; }
-  .note-modal-head { padding: 20px 18px 18px; }
+  .note-modal-head { padding: 20px 56px 18px 18px; }
   .note-modal-body { padding: 18px 18px 22px; }
-  .comment-form { flex-wrap: wrap; }
-  .comment-form input { width: 100%; }
+  .note-modal-head { padding-right: 56px; }
+  .comment-form {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'nick' 'body' 'submit' 'status';
+  }
+  .cf-submit { width: 100%; align-self: stretch; }
 }
 
 @media print {
@@ -824,14 +887,14 @@ a.pick-title:hover { color: var(--accent); }
 .install-card {
   background: var(--card);
   border-radius: 18px 18px 0 0;
-  padding: 30px 26px 26px;
+  padding: 30px 26px calc(26px + env(safe-area-inset-bottom));
   width: min(460px, 100%);
   text-align: center;
   box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.3);
   animation: rise 0.28s cubic-bezier(0.2, 0.9, 0.3, 1);
 }
 .install-mascot { width: 68px; height: 68px; object-fit: contain; }
-.install-title { font-size: 1.25rem; margin: 12px 0 10px; line-height: 1.45; }
+.install-title { font-size: 1.25rem; margin: 12px 0 10px; line-height: 1.45; word-break: keep-all; text-wrap: balance; }
 .install-desc {
   font-family: var(--sans);
   font-size: 0.88rem;
@@ -850,10 +913,11 @@ a.pick-title:hover { color: var(--accent); }
 .install-actions { display: flex; gap: 9px; }
 .install-btn {
   flex: 1;
+  min-height: 48px;
   font-family: var(--sans);
   font-size: 0.95rem;
   font-weight: 600;
-  padding: 14px 0;
+  padding: 12px 0;
   border: none;
   border-radius: 11px;
   background: var(--ink);
@@ -1161,7 +1225,6 @@ a.pick-title:hover { color: var(--accent); }
   color: var(--ink-soft);
   margin: 0 0 6px;
 }
-.comment-form.has-error::after { content: attr(data-error); }
 
 /* ── 등록 폼 추가분 ──────────────────────── */
 .result-msg {
@@ -1180,6 +1243,8 @@ a.pick-title:hover { color: var(--accent); }
   margin-top: 8px;
   font-size: 1rem;
   line-height: 1;
+  min-width: 44px;
+  min-height: 44px;
   padding: 6px 8px;
   border: none;
   background: none;
@@ -1364,8 +1429,8 @@ body.is-leaving .wrap > *:not(header):not(.site-foot) {
   font-family: var(--sans);
   font-size: 1.5rem;
   line-height: 1;
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: transparent;
@@ -1378,6 +1443,7 @@ body.is-leaving .wrap > *:not(header):not(.site-foot) {
   font-family: var(--sans);
   font-size: 1.12rem;
   font-weight: 700;
+  min-height: 44px;
   padding: 8px 16px;
   border: 1px solid transparent;
   border-radius: 8px;
@@ -1475,7 +1541,6 @@ body.is-leaving .wrap > *:not(header):not(.site-foot) {
   color: var(--ink-soft);
   text-align: center;
   padding-bottom: 12px;
-  opacity: 0.75;
 }
 .cal-head.is-sun, .cal-cell.is-sun .cal-day { color: #c0563c; }
 .cal-head.is-sat, .cal-cell.is-sat .cal-day { color: #5b86a8; }
@@ -1553,14 +1618,12 @@ body.is-leaving .wrap > *:not(header):not(.site-foot) {
 .cal-cell.has-meeting:hover { background: color-mix(in srgb, var(--rule) 40%, transparent); }
 .cal-cell.has-meeting:hover .cal-book { color: var(--ink); }
 
-.cal-cell.is-empty:hover { background: color-mix(in srgb, var(--rule) 26%, transparent); }
-.cal-cell.is-empty:hover .cal-day { color: var(--accent); }
 
 .cal-author {
   font-size: 0.6rem;
   line-height: 1.25;
   text-align: center;
-  color: color-mix(in srgb, var(--ink-soft) 80%, transparent);
+  color: var(--ink-soft);
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -1574,7 +1637,8 @@ body.is-leaving .wrap > *:not(header):not(.site-foot) {
   .cal-cover { width: 28px; height: 38px; }
   .cal-cover .cal-day { font-size: 0.58rem; padding: 0 4px 1px; }
   .cal-day { width: 24px; height: 24px; font-size: 0.72rem; }
-  .cal-book { font-size: 0.56rem; -webkit-line-clamp: 2; }
+  .cal-book { font-size: 0.62rem; -webkit-line-clamp: 3; overflow-wrap: anywhere; word-break: break-all; }
+  .cal-cell.has-meeting { min-height: 82px; }
   .cal-author { display: none; }   /* 좁은 화면에서는 제목만 */
 }
 
@@ -1727,3 +1791,33 @@ input.is-loading {
   transition: border-color 0.14s ease, color 0.14s ease;
 }
 .edit-link:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── 달력 아래 이달의 모임 목록 ─────────── */
+.cal-list { list-style: none; margin: 28px 0 0; padding: 0; font-family: var(--sans); }
+.cal-list-title { font-size: 0.82rem; font-weight: 700; color: var(--ink-soft); margin: 28px 0 8px; }
+.cal-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px 4px;
+  border-top: 1px solid var(--rule);
+  text-decoration: none;
+  color: inherit;
+}
+.cal-list li:last-child .cal-item { border-bottom: 1px solid var(--rule); }
+.cal-item:hover { background: color-mix(in srgb, var(--rule) 30%, transparent); }
+.cal-item-date {
+  flex: 0 0 auto;
+  min-width: 64px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.cal-item-date i { font-style: normal; font-weight: 400; color: var(--ink-soft); }
+.cal-item-main { min-width: 0; display: flex; flex-direction: column; }
+.cal-item-title { font-family: var(--serif); font-size: 0.98rem; line-height: 1.4; overflow-wrap: anywhere; }
+.cal-item-author { font-size: 0.78rem; color: var(--ink-soft); }
+
+.cal-cell.is-empty:hover { background: color-mix(in srgb, var(--rule) 26%, transparent); }
+.cal-cell.is-empty:hover .cal-day { color: var(--accent); }

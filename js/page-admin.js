@@ -198,12 +198,15 @@ raw.addEventListener('paste', () => setTimeout(reparse, 0));
 function renderPreview(warnings = []) {
   if (!raw.value.trim()) {
     $('f-preview').innerHTML = '';
+    $('f-submit').textContent = editId ? '고친 내용 저장' : '모임지 등록';
     return;
   }
   if (!questions.length) {
     $('f-preview').innerHTML = '<p class="parse-warn">아직 질문을 못 찾았어요. Q1. 이나 1. 같은 머리표가 있으면 더 잘 나눕니다.</p>';
     return;
   }
+
+  $('f-submit').textContent = editId ? '고친 내용 저장' : `질문 ${questions.length}개로 모임지 등록`;
 
   $('f-preview').innerHTML = `
     ${warnings.length ? `<p class="parse-warn">${esc(warnings.join(' '))}</p>` : ''}
@@ -214,7 +217,7 @@ function renderPreview(warnings = []) {
       <div class="preview-q">
         <span class="preview-num">Q${i + 1}</span>
         <textarea rows="3" data-i="${i}">${esc(q)}</textarea>
-        <button type="button" class="preview-del" data-i="${i}" aria-label="지우기">×</button>
+        <button type="button" class="preview-del" data-i="${i}" aria-label="Q${i + 1} 질문 지우기">×</button>
       </div>`
       )
       .join('')}`;

@@ -40,7 +40,7 @@ body{margin:0;background:#faf8f3;color:#1c1a17}
 .sk,.sk-book{background:linear-gradient(100deg,#cfc7b8 20%,#e6e0d2 42%,#cfc7b8 62%);background-size:220% 100%;animation:sk-slide 1.25s ease-in-out infinite;border-radius:3px}
 @keyframes sk-slide{from{background-position:130% 0}to{background-position:-30% 0}}
 </style>
-<link rel="stylesheet" href="css/style.css?v=1788234366">
+<link rel="stylesheet" href="css/style.css?v=1793670797">
 </head>
 <body>
 <div class="wrap">
@@ -55,10 +55,20 @@ body{margin:0;background:#faf8f3;color:#1c1a17}
   </header>
 
   <div class="toolbar">
-    <input type="search" id="q" placeholder="책 제목 · 저자 검색" autocomplete="off">
+    <form class="search" id="search-form" role="search" action="#">
+      <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>
+      <input type="search" id="q" placeholder="책 제목 · 저자 검색" aria-label="책 제목 또는 저자 검색" autocomplete="off" enterkeyhint="search">
+      <button type="button" class="search-clear" id="q-clear" aria-label="검색어 지우기" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg>
+      </button>
+    </form>
     <div class="chips" id="days"></div>
   </div>
-  <p class="no-hit" id="nohit" hidden>찾는 책이 책장에 없어요.</p>
+  <p class="search-status" id="q-status" role="status" aria-live="polite" hidden></p>
+  <div class="no-hit" id="nohit" hidden>
+    <p>일치하는 책이 없어요</p>
+    <button type="button" class="state-retry" id="nohit-reset">검색 초기화</button>
+  </div>
   <div id="shelves"><div class="bookcase">
       <section class="shelf-year">
         <span class="year-label sk sk-year"></span>
@@ -92,7 +102,7 @@ body{margin:0;background:#faf8f3;color:#1c1a17}
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 3.5h11a1 1 0 011 1v15.2a.6.6 0 01-.93.5L12 16.6l-5.57 3.6a.6.6 0 01-.93-.5V4.5a1 1 0 011-1z"/><path d="M9.4 8.6l2.6 2.6 2.6-3.6"/></svg>
     <span>추천</span>
   </a>
-  <a href="admin/" class="tab">
+  <a href="admin/" aria-label="모임지 등록" class="tab">
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor"
          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20.2l.9-3.6L15.3 6.2a1.6 1.6 0 012.3 0l1.1 1.1a1.6 1.6 0 010 2.3L8.3 19.9z"/><path d="M14.2 7.4l2.9 2.9M4.9 16.6l2.9 2.9"/></svg>
     <span>등록</span>
@@ -103,6 +113,6 @@ body{margin:0;background:#faf8f3;color:#1c1a17}
   </a>
 </nav>
 
-<script type="module" src="js/page-index.js?v=1788234366"></script>
+<script type="module" src="js/page-index.js?v=1793670797"></script>
 </body>
 </html>

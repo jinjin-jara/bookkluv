@@ -3,13 +3,16 @@
 import { listMeetings } from './api.js';
 import { swr } from './cache.js';
 import { spineColor, spineLayout, spineMarkup, groupByYear } from './shelf.js';
-import { esc, dayOf, DAY_NAMES, showError, showEmpty, setupNav, rise, restoreScroll, atLeast, skeletonShelf } from './ui.js';
+import { esc, formatAuthor, dayOf, DAY_NAMES, showError, showEmpty, setupNav, rise, restoreScroll, atLeast, skeletonShelf } from './ui.js';
 import { setupInstall } from './install.js';
 
 const shelvesEl = document.getElementById('shelves');
 const daysEl = document.getElementById('days');
 const nohitEl = document.getElementById('nohit');
 const searchBox = document.getElementById('q');
+const searchForm = document.getElementById('search-form');
+const clearBtn = document.getElementById('q-clear');
+const statusEl = document.getElementById('q-status');
 
 
 const activeDays = new Set();
@@ -20,8 +23,8 @@ const scaleOf = () => (window.innerWidth < 700 ? 0.78 : 1);
 
 function bookHTML(m, index, total) {
   const { width: w, height: h, fontSize: fs } = spineLayout(m, scaleOf());
-  const key = `${m.title} ${m.author || ''}`.toLowerCase();
-  const tip = `${m.title} · ${m.author || '저자 미상'} · ${m.date} ${dayOf(m.date)}요모임`;
+  const key = `${m.title} ${m.author || ''} ${formatAuthor(m.author)}`.toLowerCase();
+  const tip = `${m.title} · ${formatAuthor(m.author) || '저자 미상'} · ${m.date} ${dayOf(m.date)}요모임`;
 
   return `<div class="slot" style="width:${w}px" data-date="${esc(m.date)}" data-key="${esc(key)}">
     <a class="book" href="meeting/?id=${encodeURIComponent(m.id)}"
@@ -92,7 +95,21 @@ function applyFilter() {
     total += shown;
   });
 
-  nohitEl.hidden = total > 0;
+  nohitEl.hidden = total > 0 || !meetings.length;
+
+  // 걸러낸 상태일 때만 결과 수를 알린다
+  const filtering = query.trim() || activeDays.size;
+  statusEl.hidden = !filtering || total === 0;
+  if (filtering && total > 0) statusEl.textContent = `${total}개의 모임을 찾았어요`;
+  clearBtn.hidden = !searchBox.value;
+}
+
+function resetSearch() {
+  clearTimeout(timer);
+  searchBox.value = '';
+  query = '';
+  applyFilter();
+  searchBox.focus();
 }
 
 // 한글 조합 중에는 걸러내지 않고, 입력이 멎으면 그때 한 번만 반영한다.
@@ -105,9 +122,31 @@ function scheduleFilter() {
     applyFilter();
   }, 160);
 }
+
+// Enter는 기다리지 않고 바로 반영한다. (폼이 페이지를 다시 불러오지 않게 막는다)
+searchForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  clearTimeout(timer);
+  query = searchBox.value;
+  applyFilter();
+  searchBox.blur();
+});
+clearBtn.addEventListener('click', resetSearch);
+document.getElementById('nohit-reset').addEventListener('click', () => {
+  // 검색어와 요일 필터를 함께 풀어야 전체가 돌아온다
+  activeDays.clear();
+  daysEl.querySelectorAll('.chip').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+  resetSearch();
+});
+searchBox.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && searchBox.value) { e.preventDefault(); resetSearch(); }
+});
 searchBox.addEventListener('compositionstart', () => { composing = true; });
 searchBox.addEventListener('compositionend', () => { composing = false; scheduleFilter(); });
-searchBox.addEventListener('input', () => { if (!composing) scheduleFilter(); });
+searchBox.addEventListener('input', () => {
+  clearBtn.hidden = !searchBox.value;
+  if (!composing) scheduleFilter();
+});
 
 // 화면 폭이 바뀌면 책 치수를 다시 잡는다.
 let resizeTimer = null;

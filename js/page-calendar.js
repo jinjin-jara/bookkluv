@@ -3,7 +3,7 @@
 import { listMeetings } from './api.js';
 import { swr } from './cache.js';
 import { spineColor } from './shelf.js';
-import { esc, showError, setupNav, rise, atLeast } from './ui.js';
+import { esc, formatAuthor, showError, setupNav, rise, atLeast } from './ui.js';
 import { setupInstall } from './install.js';
 
 const root = document.getElementById('calendar');
@@ -23,6 +23,28 @@ function shift(delta) {
   year = d.getFullYear();
   month = d.getMonth() + 1;
   render();
+}
+
+/** 이 달의 모임을 날짜순으로. 칸과 같은 상세 화면으로 간다. */
+function monthList(monthKey) {
+  const items = meetings
+    .filter((m) => String(m.date).startsWith(monthKey))
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  if (!items.length) return '';
+
+  return `
+    <h3 class="cal-list-title">${month}월의 모임</h3>
+    <ul class="cal-list">
+      ${items.map((m) => {
+        const d = new Date(m.date + 'T00:00:00');
+        return `<li><a class="cal-item" href="meeting/?id=${encodeURIComponent(m.id)}">
+          <span class="cal-item-date">${d.getDate()}일 <i>${WEEK[d.getDay()]}</i></span>
+          <span class="cal-item-main">
+            <span class="cal-item-title">${esc(m.title)}</span>
+            ${m.author ? `<span class="cal-item-author">${esc(formatAuthor(m.author))}</span>` : ''}
+          </span></a></li>`;
+      }).join('')}
+    </ul>`;
 }
 
 function render() {
@@ -55,10 +77,11 @@ function render() {
     cls.push('has-meeting');
     cells.push(`
       <a class="${cls.join(' ')}" href="meeting/?id=${encodeURIComponent(m.id)}"
-         title="${esc(`${m.title} · ${m.author || '저자 미상'}`)}">
+         title="${esc(`${m.title} · ${formatAuthor(m.author) || '저자 미상'}`)}"
+         aria-label="${esc(`${month}월 ${d}일 ${m.title}`)}">
         <span class="cal-day" style="--pad:${spineColor(m, m._seq, meetings.length)}">${d}</span>
         <span class="cal-book">${esc(m.title)}</span>
-        ${m.author ? `<span class="cal-author">${esc(m.author)}</span>` : ''}
+        ${m.author ? `<span class="cal-author">${esc(formatAuthor(m.author))}</span>` : ''}
       </a>`);
   }
 
@@ -78,7 +101,8 @@ function render() {
     <div class="cal-grid" id="grid">
       ${WEEK.map((w, i) => `<div class="cal-head${i === 0 ? ' is-sun' : ''}${i === 6 ? ' is-sat' : ''}">${w}</div>`).join('')}
       ${cells.join('')}
-    </div>`;
+    </div>
+    ${monthList(monthKey)}`;
 
   document.getElementById('prev').addEventListener('click', () => shift(-1));
   document.getElementById('next').addEventListener('click', () => shift(1));
